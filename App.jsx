@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { SLIDE_COUNT } from "./src/notes.js";
 
-// 40 persons × 20 items — no extreme scores (scores range 1–19)
+// 40 persons × 20 items — Person 1 scores 1, Person 40 scores 20 (perfect)
 const NUM_PERSONS=40, NUM_ITEMS=20;
 const PERSON_POSITIONS=Array.from({length:NUM_PERSONS},(_,i)=>-4.5+i*(9/(NUM_PERSONS-1)));
 const ITEM_POSITIONS=Array.from({length:NUM_ITEMS},(_,i)=>-3.5+i*(7/(NUM_ITEMS-1)));
@@ -35,7 +35,7 @@ function ContinuumLine({items,persons,highlightPerson=-1,visItems=null,pA=null,p
   const mn=-5,mx=6,w=2000;
   const scaleToX=v=>((v-mn)/(mx-mn))*w;
   return(
-    <svg width={w+80} height={240} style={{display:"block",margin:"0 auto"}}>
+    <svg viewBox={`0 0 ${w+80} 240`} style={{display:"block",margin:"0 auto",width:"100%",height:"auto"}}>
       <line x1={40} y1={130} x2={w+40} y2={130} stroke="#475569" strokeWidth={3}/>
       {[-4,-3,-2,-1,0,1,2,3,4,5].map(v=>(
         <g key={v}><line x1={scaleToX(v)+40} y1={120} x2={scaleToX(v)+40} y2={140} stroke="#64748b" strokeWidth={2}/>
@@ -202,7 +202,7 @@ export default function App(){
       </div>
       <KeyInsight>"Counting stuff does not result in a magnitude. Therefore, counting stuff does not result in true measurement."</KeyInsight>
       <p style={{fontSize:34,color:"#94a3b8",textAlign:"center",maxWidth:1500,margin:"0 auto",lineHeight:1.6}}>Five large rocks might weigh 500g. Thirty small rocks might weigh 200g. A count requires a unit of the magnitude you're actually measuring.</p>
-      <div style={{fontSize:28,color:"#64748b",textAlign:"center",maxWidth:1600,margin:"36px auto 0",lineHeight:1.7,fontStyle:"italic",borderTop:"1px solid #334155",paddingTop:32}}><strong style={{color:"#94a3b8"}}>Magnitude:</strong> a position on a continuum, expressed in equal-interval units. 642g is a magnitude &mdash; it tells us exactly where on the continuum of mass this object sits, in units that mean the same thing everywhere on the scale.<br/><br/><span style={{fontStyle:"normal",color:"#94a3b8"}}>Formally, magnitudes are amounts of a quantitative attribute that can be <strong>ordered</strong> (one is greater or less than another), <strong>combined additively</strong> (200g and 300g together give 500g), and expressed as <strong>ratios</strong> relative to a chosen unit. Following Roche (<em>The Mathematics of Measurement</em>, 1998), measurement is the estimation of the ratio of a magnitude to a unit of the same kind.</span></div>
+      <div style={{fontSize:28,color:"#64748b",textAlign:"center",maxWidth:1600,margin:"36px auto 0",lineHeight:1.7,fontStyle:"italic",borderTop:"1px solid #334155",paddingTop:32}}><strong style={{color:"#94a3b8"}}>Magnitude:</strong> a position on a continuum, expressed in equal-interval units. 642g is a magnitude &mdash; it tells us exactly where on the continuum of mass this object sits, in units that mean the same thing everywhere on the scale.</div>
     </div>),
 
     // Slide 2 — The Education Problem
@@ -272,18 +272,24 @@ export default function App(){
       const vis=itemSubset==="all"?null:itemSubset==="odd"?Array.from({length:10},(_,i)=>i*2):Array.from({length:10},(_,i)=>i*2+1);
       const pA=itemSubset==="all"?2.0:itemSubset==="odd"?2.15:1.85;
       const pB=itemSubset==="all"?-1.0:itemSubset==="odd"?-0.85:-1.15;
-      return(<div>
-        <SlideTitle>Invariance</SlideTitle>
-        <ContinuumLine items pA={pA} pB={pB} visItems={vis}/>
-        <div style={{display:"flex",justifyContent:"center",gap:28,marginTop:40}}>
-          <SlideButton onClick={()=>setItemSubset("all")} active={itemSubset==="all"}>All 20 Items</SlideButton>
-          <SlideButton onClick={()=>setItemSubset("odd")} active={itemSubset==="odd"}>Odd Items Only</SlideButton>
-          <SlideButton onClick={()=>setItemSubset("even")} active={itemSubset==="even"}>Even Items Only</SlideButton>
+      return(<div style={{display:"flex",gap:96}}>
+        <div style={{flex:"1 1 0",minWidth:0}}>
+          <SlideTitle>Invariance</SlideTitle>
+          <ContinuumLine items pA={pA} pB={pB} visItems={vis}/>
+          <div style={{display:"flex",justifyContent:"center",gap:28,marginTop:40}}>
+            <SlideButton onClick={()=>setItemSubset("all")} active={itemSubset==="all"}>All 20 Items</SlideButton>
+            <SlideButton onClick={()=>setItemSubset("odd")} active={itemSubset==="odd"}>Odd Items Only</SlideButton>
+            <SlideButton onClick={()=>setItemSubset("even")} active={itemSubset==="even"}>Even Items Only</SlideButton>
+          </div>
+          <KeyInsight>The comparison between Person A and Person B remains the same &mdash; regardless of which items are used.</KeyInsight>
+          <div style={{fontSize:26,color:"#cbd5e1",textAlign:"left",padding:"28px 44px",borderLeft:"6px solid #f59e0b",fontStyle:"italic",lineHeight:1.7,background:"rgba(245,158,11,0.03)",borderRadius:"0 12px 12px 0"}}>
+            "The comparison between two stimuli should be independent of which particular individuals were instrumental for the comparison; and it should also be independent of which other stimuli within the considered class were or might also have been compared. Symmetrically, a comparison between two individuals should be independent of which particular stimuli within the class considered were instrumental for the comparison."
+            <div style={{marginTop:16,fontStyle:"normal",color:"#f59e0b",fontWeight:600,fontSize:24}}>— Georg Rasch, 1961</div>
+          </div>
         </div>
-        <KeyInsight>The comparison between Person A and Person B remains the same &mdash; regardless of which items are used.</KeyInsight>
-        <div style={{fontSize:30,color:"#cbd5e1",textAlign:"left",padding:"36px 56px",borderLeft:"6px solid #f59e0b",margin:"36px auto",maxWidth:1700,fontStyle:"italic",lineHeight:1.7,background:"rgba(245,158,11,0.03)",borderRadius:"0 12px 12px 0"}}>
-          "The comparison between two stimuli should be independent of which particular individuals were instrumental for the comparison; and it should also be independent of which other stimuli within the considered class were or might also have been compared. Symmetrically, a comparison between two individuals should be independent of which particular stimuli within the class considered were instrumental for the comparison."
-          <div style={{marginTop:20,fontStyle:"normal",color:"#f59e0b",fontWeight:600,fontSize:28}}>— Georg Rasch, 1961</div>
+        <div style={{flex:"0 0 36%",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+          <div style={{borderRadius:16,overflow:"hidden",border:"2px solid #334155",width:"100%"}}><img src="/bond-blot.jpg" alt="Bond BLOT invariance: odd vs even item person estimates" style={{width:"100%",height:"auto",display:"block"}}/></div>
+          <p style={{fontSize:20,color:"#64748b",marginTop:12,fontStyle:"italic",textAlign:"center"}}>Bond &amp; Fox: Person estimates from odd vs even items (BLOT)</p>
         </div>
       </div>);
     },
