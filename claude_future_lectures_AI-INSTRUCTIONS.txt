@@ -1,0 +1,246 @@
+GUIDE FOR CLAUDE: CREATING PSYCHOMETRICS LECTURES
+===================================================
+Author: PMontuoro
+Created: 2026-03-12
+Purpose: Instructions for future Claude sessions on how lectures work here
+         and how to create new ones.
+
+OVERVIEW
+--------
+C:\Data Projects\html presentations\
+  This is the top-level hub for all interactive HTML presentations.
+
+C:\Data Projects\html presentations\rasch model series\
+  This is the first lecture series, containing lectures on Rasch measurement
+  and psychometrics. Each lecture is a React-based slide deck with:
+  - Full-screen animated slides (dark theme, amber/green accents)
+  - Interactive elements (animations, toggleable views, data grids)
+  - A separate presenter notes window (opened via P key)
+  - Keyboard navigation (arrow keys)
+  - A BroadcastChannel to sync slides between main view and presenter
+
+The first lecture created was "Lecture_1_Fundamental_Measurement" covering
+Rasch measurement, Guttman structures, invariance, and latent traits.
+
+Future lecture series on other topics can be added as sibling folders
+alongside "rasch model series" inside "html presentations".
+
+
+DIRECTORY STRUCTURE
+-------------------
+C:\Data Projects\html presentations\
+  |
+  |-- rasch model series\              <-- This lecture series
+  |     |
+  |     |-- App.jsx                    <-- Main slide deck component (all slides live here)
+  |     |-- index.html                 <-- Entry point for Vite dev server
+  |     |-- Lecture_1_Fundamental_Measurement.html  <-- Built standalone HTML
+  |     |
+  |     |-- src/
+  |     |     |-- main.jsx             <-- React entry point (imports App.jsx)
+  |     |     |-- notes.js             <-- SLIDE_COUNT, SLIDE_TITLES[], and NOTES[] arrays
+  |     |     |-- PresenterView.jsx    <-- Presenter notes window component
+  |     |     |-- presenter-main.jsx   <-- React entry point for presenter view
+  |     |     |-- presenter.html       <-- HTML shell for presenter window
+  |     |
+  |     |-- public/                    <-- Static assets (images, etc.)
+  |     |     |-- brain.png
+  |     |     |-- bond-blot.jpg
+  |     |
+  |     |-- assets/                    <-- Built JS bundles (output of npm run build)
+  |     |-- dist/                      <-- Full Vite build output
+  |     |-- vite.config.js             <-- Vite config (base: './' for relative paths)
+  |     |-- package.json               <-- Dependencies: react, react-dom, vite, @vitejs/plugin-react
+  |
+  |-- (future series folders go here)
+
+
+HOW LECTURE 1 WAS CREATED
+--------------------------
+1. PMontuoro described the lecture topic and content to Claude.
+
+2. Claude created the slide deck as a single React component in App.jsx:
+   - Each slide is a function in the `slides` array inside the App component.
+   - Reusable sub-components: SlideTitle, KeyInsight, SlideButton, ContinuumLine, Grid.
+   - Data (Guttman matrices, person/item positions) is computed at module level.
+   - Interactive state (animations, toggles) is managed with useState/useRef.
+
+3. Claude created presenter notes in src/notes.js:
+   - SLIDE_COUNT: total number of slides
+   - SLIDE_TITLES: array of slide title strings
+   - NOTES: array of detailed presenter scripts (one per slide)
+   - The notes use special formatting: text in quotes = speech (white),
+     text outside quotes = stage directions (red), **bold** for emphasis.
+
+4. The presenter view (src/PresenterView.jsx) syncs with the main deck via
+   BroadcastChannel("deck-sync") and shows: current slide title, notes,
+   slide navigation list, and next slide preview info.
+
+5. Images were placed in public/ and referenced with relative paths (./brain.png).
+
+6. To make the deck work when opened from a static server (not Vite dev):
+   - vite.config.js was set to base: './' (relative asset paths)
+   - npm run build produces dist/ with compiled JS bundles
+   - The built HTML + assets were copied to the root folder
+   - The built presenter.html was copied to src/presenter.html
+   - Images were copied from public/ to root
+
+
+HOW TO SERVE AND PRESENT
+--------------------------
+Option A (static server - for presenting):
+  1. Open terminal in C:\Data Projects\html presentations\rasch model series
+  2. Run: npx serve . -p 5555
+  3. Open: http://localhost:5555/Lecture_1_Fundamental_Measurement.html
+
+Option B (Vite dev server - for development):
+  1. Open terminal in C:\Data Projects\html presentations\rasch model series
+  2. Run: npm run dev
+  3. Open the localhost URL Vite provides (uses index.html)
+
+Controls:
+  - Arrow keys: navigate slides
+  - P key: open presenter notes window
+  - Interactive slides have on-screen buttons
+
+
+HOW TO CREATE A NEW LECTURE (e.g., Lecture 2)
+----------------------------------------------
+When PMontuoro asks for a new lecture, follow these steps:
+
+1. BACK UP THE CURRENT LECTURE
+   - The current App.jsx and src/notes.js contain Lecture 1 content.
+   - Before overwriting, copy them to a backup:
+       cp App.jsx App_Lecture1.jsx
+       cp src/notes.js src/notes_Lecture1.js
+   - Or better: create a subfolder per lecture for archiving source files.
+
+2. CREATE NEW SLIDE CONTENT
+   - Edit App.jsx with entirely new slide functions in the slides[] array.
+   - Keep the same overall structure: App component, slides array, shared
+     sub-components (SlideTitle, KeyInsight, SlideButton, etc.).
+   - Add any new interactive components or data as needed.
+   - Reference images with relative paths: src="./image.png"
+
+3. UPDATE PRESENTER NOTES
+   - Edit src/notes.js:
+     - Update SLIDE_COUNT to match new number of slides
+     - Update SLIDE_TITLES array with new slide titles
+     - Update NOTES array with new presenter scripts
+
+4. ADD ANY NEW IMAGES
+   - Place new images in public/ folder
+   - Reference them in App.jsx with src="./filename.ext"
+
+5. BUILD THE STANDALONE VERSION
+   - Update vite.config.js input entry if the HTML filename changes:
+       main: resolve(__dirname, 'Lecture_2_Topic_Name.html'),
+   - Create the new HTML entry file (copy from index.html, change title):
+       cp index.html Lecture_2_Topic_Name.html
+       (then edit the <title> tag)
+   - Run: npm run build
+   - Copy built files to root:
+       cp dist/Lecture_2_Topic_Name.html .
+       cp -r dist/assets/* assets/
+       cp dist/src/presenter.html src/presenter.html
+   - Copy any new images from public/ to root:
+       cp public/new-image.png .
+
+6. TEST
+   - Serve with: npx serve . -p 5555
+   - Open: http://localhost:5555/Lecture_2_Topic_Name.html
+   - Test all slides, animations, and presenter notes
+   - Verify images load correctly
+
+7. UPDATE readme_for_presentation.txt with the new lecture link.
+
+
+HOW TO CREATE A NEW LECTURE SERIES
+-----------------------------------
+If PMontuoro wants lectures on a completely different topic (not Rasch):
+
+1. Create a new folder alongside "rasch model series":
+     C:\Data Projects\html presentations\new series name\
+
+2. Copy the scaffold from rasch model series:
+     - package.json, vite.config.js, index.html
+     - src/main.jsx, src/presenter-main.jsx, src/presenter.html, src/PresenterView.jsx
+     - src/notes.js (empty template)
+     - App.jsx (empty template)
+
+3. Run npm install in the new folder.
+
+4. Build new lectures following the same process as above.
+
+Each series is self-contained with its own node_modules, build, and assets.
+
+
+DESIGN CONVENTIONS
+-------------------
+- Dark theme: background #0f172a, text #f8fafc
+- Accent amber: #f59e0b (titles, highlights, key insights)
+- Accent green: #22c55e, #4ade80 (positive/measurement concepts)
+- Accent blue: #38bdf8 (persons, ability)
+- Accent red: #ef4444 (misfit, errors)
+- Large fonts: titles 88px, body 30-38px, sub-text 26-28px
+- SlideTitle component for consistent headers
+- KeyInsight component for highlighted takeaway boxes
+- SlideButton for interactive controls
+- Progress bar with bunny emoji at bottom of screen
+- Font: system-ui, -apple-system, sans-serif
+
+
+SLIDE ARCHITECTURE PATTERN
+----------------------------
+Each slide is a function in the slides[] array:
+
+  const slides = [
+    // Slide 0 - Title
+    () => (<div>...</div>),
+
+    // Slide 1 - Content
+    () => (<div>
+      <SlideTitle>Title Here</SlideTitle>
+      ...content...
+      <KeyInsight>Main takeaway</KeyInsight>
+    </div>),
+
+    // Slide N - Interactive (use closure for state)
+    () => {
+      const data = someComputation;
+      return (<div>
+        <SlideTitle>Title</SlideTitle>
+        ...interactive content with buttons...
+      </div>);
+    },
+  ];
+
+State for interactive slides is managed in the parent App component
+using useState hooks, and reset in the useEffect that watches currentSlide.
+
+
+DEPENDENCIES
+-------------
+- React 19.x
+- ReactDOM 19.x
+- Vite 6.x with @vitejs/plugin-react
+- No other libraries. All visualizations are built with inline SVG and CSS.
+
+
+IMPORTANT NOTES FOR CLAUDE
+----------------------------
+- PMontuoro creates lectures about psychometrics, Rasch measurement, and
+  related educational measurement topics.
+- The lectures are designed for classroom/conference presentation on a
+  large screen.
+- Interactive elements are important - animations, toggleable views, and
+  data visualizations are central to the teaching approach.
+- Presenter notes should include both what to SAY (in quotes) and what
+  to DO (stage directions outside quotes).
+- Always use relative paths (./image.png, ./assets/...) so files work
+  when served from any static server.
+- Always set base: './' in vite.config.js.
+- After building, always copy the built presenter.html to src/presenter.html
+  and copy images from public/ to root.
+- The BroadcastChannel name "deck-sync" must match between App.jsx and
+  PresenterView.jsx.
