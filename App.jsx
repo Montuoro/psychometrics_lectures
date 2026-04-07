@@ -77,33 +77,36 @@ function mleExpected(abilities, difficulties){
 }
 function mleIterate(obs, ab0, di0, steps){
   let ab=[...ab0], di=[...di0];
-  const history=[{ab:[...ab],di:[...di],exp:mleExpected(ab,di)}];
+  const exp0=mleExpected(ab,di);
+  const history=[{ab:[...ab],di:[...di],exp:exp0,maxChange:null}];
   for(let s=0;s<steps;s++){
     const exp=mleExpected(ab,di);
-    // update persons
+    // update persons: new β = old β + Σresiduals / Σvariance
     const newAb=ab.map((b,p)=>{
       let sumR=0,sumV=0;
       for(let i=0;i<di.length;i++){const e=exp[p][i];sumR+=obs[p][i]-e;sumV+=e*(1-e);}
-      return b-sumR/(-sumV);
+      return sumV>0?b+sumR/sumV:b;
     });
-    // update items
+    // update items: new δ = old δ - Σresiduals / Σvariance
     const newDi=di.map((d,i)=>{
       let sumR=0,sumV=0;
       for(let p=0;p<ab.length;p++){const e=exp[p][i];sumR+=obs[p][i]-e;sumV+=e*(1-e);}
-      return d+sumR/(-sumV);
+      return sumV>0?d-sumR/sumV:d;
     });
     // center items
     const dm=newDi.reduce((a,b)=>a+b,0)/newDi.length;
     const centeredDi=newDi.map(d=>d-dm);
+    // track max change
+    const maxC=Math.max(...newAb.map((v,i)=>Math.abs(v-ab[i])),...centeredDi.map((v,i)=>Math.abs(v-di[i])));
     ab=newAb;di=centeredDi;
-    history.push({ab:[...ab],di:[...di],exp:mleExpected(ab,di)});
+    history.push({ab:[...ab],di:[...di],exp:mleExpected(ab,di),maxChange:maxC});
   }
   return history;
 }
 const MLE_INIT_AB = MLE_OBS.map(row=>{const s=row.reduce((a,b)=>a+b,0);const p=s/row.length;return Math.log(Math.max(p,0.05)/Math.max(1-p,0.05));});
 const MLE_INIT_DI_RAW = MLE_OBS[0].map((_,i)=>{const s=MLE_OBS.reduce((sum,r)=>sum+r[i],0);const p=s/MLE_OBS.length;return Math.log(Math.max(1-p,0.05)/Math.max(p,0.05));});
 const MLE_INIT_DI = (()=>{const m=MLE_INIT_DI_RAW.reduce((a,b)=>a+b,0)/MLE_INIT_DI_RAW.length;return MLE_INIT_DI_RAW.map(d=>d-m);})();
-const MLE_HISTORY = mleIterate(MLE_OBS, MLE_INIT_AB, MLE_INIT_DI, 6);
+const MLE_HISTORY = mleIterate(MLE_OBS, MLE_INIT_AB, MLE_INIT_DI, 30);
 
 /* ── ICC component for fit slides ── */
 function ICC({difficulty,observedPoints,label,misfitType}){
@@ -144,9 +147,13 @@ export default function App(){
   const [logitDiff,setLogitDiff]=useState(0);
   // Fit demo state
   const [fitView,setFitView]=useState(0);
+  // MLE overlay, tooltip, and person/item toggle
+  const [showOverlay,setShowOverlay]=useState(false);
+  const [tooltip,setTooltip]=useState(null);
+  const [mleView,setMleView]=useState('person'); // 'person' or 'item'
 
   useEffect(()=>{
-    setMleStep(0);setFocusStep(0);setFitView(0);setLogitDiff(0);
+    setMleStep(0);setFocusStep(0);setFitView(0);setLogitDiff(0);setShowOverlay(false);setTooltip(null);setMleView('person');
   },[currentSlide]);
 
   useEffect(()=>{
@@ -347,74 +354,184 @@ export default function App(){
       );
     },
 
-    // ═══ SLIDE 4b — MLE: The Iteration ═══
+    // ═══ SLIDE 4b — MLE: The Iteration Process (Moulton-style) ═══
     ()=>{
-      const step=Math.min(mleStep,MLE_HISTORY.length-1);
-      const h=MLE_HISTORY[step];
-      // Compute total residual for this step
-      const totalResidual=MLE_OBS.reduce((sum,row,p)=>sum+row.reduce((s,obs,i)=>s+Math.abs(obs-h.exp[p][i]),0),0);
+      // Sequential iterations 0-7, where 0=raw, 1-7=iterations
+      const iterSteps=[0,1,2,3,5,10,15,20];
+      const ms=Math.min(mleStep,iterSteps.length-1);
+      const iterIdx=iterSteps[ms];
+      const h=MLE_HISTORY[Math.min(iterIdx,MLE_HISTORY.length-1)];
+      const personTotals=MLE_OBS.map(row=>row.reduce((a,b)=>a+b,0));
+      const itemTotals=MLE_OBS[0].map((_,i)=>MLE_OBS.reduce((s,r)=>s+r[i],0));
+      const pResSums=MLE_LABELS.map((_,p)=>MLE_OBS[p].reduce((s,obs,i)=>s+(obs-h.exp[p][i]),0));
+      const iResSums=MLE_OBS[0].map((_,i)=>MLE_OBS.reduce((s,r,p)=>s+(r[i]-h.exp[p][i]),0));
+      const pVarSums=MLE_LABELS.map((_,p)=>MLE_OBS[p].reduce((s,_o,i)=>{const e=h.exp[p][i];return s+e*(1-e);},0));
+      const iVarSums=MLE_OBS[0].map((_,i)=>MLE_OBS.reduce((s,_r,p)=>{const e=h.exp[p][i];return s+e*(1-e);},0));
+      const maxChange=h.maxChange;
+      const totalResSumPersons=pResSums.reduce((a,b)=>a+Math.abs(b),0);
+      const totalResSumItems=iResSums.reduce((a,b)=>a+Math.abs(b),0);
+      // Total sum of all parameter changes this iteration
+      const prevH2=iterIdx>0?MLE_HISTORY[iterIdx-1]:h;
+      const totalAbChange=iterIdx>0?(h.ab.reduce((s,v,i)=>s+Math.abs(v-prevH2.ab[i]),0)+h.di.reduce((s,v,i)=>s+Math.abs(v-prevH2.di[i]),0)):null;
+      const converged=maxChange!==null&&maxChange<0.005;
+      const isPerson=mleView==='person';
+      const f=13; const cw=64;
+      const resClr=r=>{const a=Math.abs(r);return a<0.01?"#22c55e":a<0.1?"#f59e0b":"#ef4444";};
+      const resBg=r=>{const a=Math.abs(r);return a<0.01?"rgba(34,197,94,0.2)":a<0.1?"rgba(245,158,11,0.1)":"rgba(239,68,68,0.15)";};
+      // Tooltip handler
+      const tt=(e,text)=>{setTooltip({x:e.clientX,y:e.clientY,text});};
+      const ttOff=()=>setTooltip(null);
       return(
-        <div style={{padding:"30px 50px"}}>
-          <div style={{fontSize:48,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:4}}>The Iteration Process</div>
-          <div style={{display:"flex",gap:28,margin:"10px auto",maxWidth:1700,justifyContent:"center",alignItems:"flex-start"}}>
-            {/* Left: Number line with persons and items */}
-            <div style={{flex:1.2}}>
-              <div style={{fontSize:20,color:"#94a3b8",marginBottom:8,textAlign:"center"}}>{step===0?"Initial Estimates":"Iteration "+step+" — estimates settling"}</div>
-              <svg viewBox="0 0 600 320" style={{width:"100%"}}>
-                {/* Number line */}
-                <line x1={40} y1={160} x2={560} y2={160} stroke="#475569" strokeWidth={2}/>
-                {[-4,-3,-2,-1,0,1,2,3,4].map(v=>(
-                  <g key={v}><line x1={40+(v+4)/8*520} y1={152} x2={40+(v+4)/8*520} y2={168} stroke="#64748b" strokeWidth={1.5}/><text x={40+(v+4)/8*520} y={185} textAnchor="middle" fill="#64748b" fontSize={12}>{v}</text></g>
-                ))}
-                <text x={300} y={200} textAnchor="middle" fill="#64748b" fontSize={12}>Logits</text>
-                {/* Person dots */}
-                {MLE_LABELS.map((lb,p)=>{
-                  const x=40+((h.ab[p]+4)/8)*520;
-                  return(<g key={`p${p}`}><circle cx={x} cy={130} r={10} fill="#38bdf8" stroke="#fff" strokeWidth={1.5} style={{transition:"cx 0.8s ease"}}/><text x={x} y={118} textAnchor="middle" fill="#38bdf8" fontSize={11} fontWeight="bold">{lb}</text></g>);
-                })}
-                {/* Item dots */}
-                {["I1","I2","I3","I4","I5","I6","I7","I8","I9","I10"].map((it,i)=>{
-                  const x=40+((h.di[i]+4)/8)*520;
-                  return(<g key={`i${i}`}><polygon points={`${x},195 ${x-7},210 ${x+7},210`} fill="#f59e0b" stroke="#fff" strokeWidth={1} style={{transition:"all 0.8s ease"}}/><text x={x} y={225} textAnchor="middle" fill="#f59e0b" fontSize={9} fontWeight="bold">{it}</text></g>);
-                })}
-                <text x={40} y={130} textAnchor="end" fill="#38bdf8" fontSize={11}>Persons</text>
-                <text x={40} y={210} textAnchor="end" fill="#f59e0b" fontSize={11}>Items</text>
-                {/* Residual indicator */}
-                <rect x={380} y={240} width={180} height={60} rx={10} fill="rgba(15,23,42,0.8)" stroke={totalResidual<1?"#22c55e":"#f59e0b"} strokeWidth={2}/>
-                <text x={470} y={258} textAnchor="middle" fill="#94a3b8" fontSize={11}>Total |Residual|</text>
-                <text x={470} y={283} textAnchor="middle" fill={totalResidual<1?"#22c55e":"#f59e0b"} fontSize={22} fontWeight="bold">{totalResidual.toFixed(3)}</text>
-              </svg>
+        <div style={{padding:"2px 12px",position:"relative"}} onClick={e=>e.stopPropagation()}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{fontSize:52,fontWeight:700,color:"#f59e0b"}}>Maximum Likelihood Estimation: A Look Under the Hood</div>
+            {ms>0&&<div style={{fontSize:16,color:converged?"#22c55e":"#94a3b8",marginTop:6,fontWeight:600}}>
+              Iteration {iterIdx}{converged?" — CONVERGED":""} | Σ|Person ΣRes| = {totalResSumPersons.toFixed(4)} | Σ|Item ΣRes| = {totalResSumItems.toFixed(4)}{totalAbChange!==null&&` | Σ|ΔEstimates| = ${totalAbChange.toFixed(4)}`}
+            </div>}
+          </div>
+          {ms===0?(
+            <div style={{margin:"0 auto",maxWidth:1000}}>
+              <div style={{fontSize:16,fontWeight:600,color:"#94a3b8",marginBottom:4}}>Observed Response Matrix</div>
+              <table style={{borderCollapse:"collapse",fontSize:15,margin:"0 auto"}}>
+                <thead><tr>
+                  <th style={{width:30}}/>
+                  {MLE_ITEMS.map((it,i)=><th key={i} style={{width:64,textAlign:"center",color:"#f59e0b",fontWeight:700,padding:"4px 0",fontSize:13}}>{it}</th>)}
+                  <th style={{textAlign:"center",color:"#94a3b8",fontWeight:700,padding:"4px 8px",borderLeft:"2px solid #334155",fontSize:13}}>Score</th>
+                  <th style={{textAlign:"center",color:"#38bdf8",fontWeight:700,padding:"4px 8px",fontSize:13}}>β₀</th>
+                </tr></thead>
+                <tbody>
+                  {MLE_LABELS.map((lb,p)=>(
+                    <tr key={p}>
+                      <td style={{fontWeight:700,color:"#38bdf8",textAlign:"center",fontSize:16}}>{lb}</td>
+                      {Array.from({length:10},(_,i)=>{
+                        const v=MLE_OBS[p][i];
+                        return <td key={i} style={{textAlign:"center",fontWeight:700,fontSize:16,padding:"6px 0",background:v===1?"rgba(34,197,94,0.2)":"rgba(239,68,68,0.1)",color:"#f8fafc",border:"1px solid #1e293b"}}>{v}</td>;
+                      })}
+                      <td style={{textAlign:"center",color:"#94a3b8",fontWeight:700,fontSize:14,padding:"4px 8px",borderLeft:"2px solid #334155"}}>{personTotals[p]}</td>
+                      <td style={{textAlign:"center",color:"#38bdf8",fontWeight:600,fontSize:13,padding:"4px 8px"}}>{h.ab[p].toFixed(2)}</td>
+                    </tr>
+                  ))}
+                  <tr style={{borderTop:"2px solid #334155"}}>
+                    <td style={{fontWeight:700,color:"#94a3b8",textAlign:"center",fontSize:12}}>Total</td>
+                    {itemTotals.map((t,i)=><td key={i} style={{textAlign:"center",color:"#f59e0b",fontWeight:700,fontSize:14,padding:"4px 0"}}>{t}</td>)}
+                    <td/><td/>
+                  </tr>
+                  <tr>
+                    <td style={{fontWeight:700,color:"#f59e0b",textAlign:"center",fontSize:12}}>δ₀</td>
+                    {MLE_ITEMS.map((_,i)=><td key={i} style={{textAlign:"center",color:"#f59e0b",fontWeight:600,fontSize:12,padding:"4px 0"}}>{h.di[i].toFixed(2)}</td>)}
+                    <td/><td/>
+                  </tr>
+                </tbody>
+              </table>
+              <div style={{textAlign:"center",fontSize:16,color:"#64748b",marginTop:10}}>Initial estimates β₀ and δ₀ from log-odds of raw proportions. These are our crude starting point.</div>
             </div>
-            {/* Right: Residual heatmap */}
-            <div style={{flex:0.8}}>
-              <div style={{fontSize:20,color:"#94a3b8",marginBottom:8,textAlign:"center"}}>{step===0?"Observed Data":"Residuals (Observed − Expected)"}</div>
-              <div style={{display:"grid",gridTemplateColumns:`36px repeat(10,36px)`,gap:2,margin:"0 auto",width:"fit-content"}}>
-                <div/>
-                {["1","2","3","4","5","6","7","8","9","10"].map((it,i)=><div key={i} style={{textAlign:"center",fontSize:11,fontWeight:600,color:"#f59e0b",padding:"2px 0"}}>{it}</div>)}
-                {MLE_LABELS.map((lb,p)=>(
-                  [<div key={`l${p}`} style={{fontSize:12,fontWeight:600,color:"#38bdf8",display:"flex",alignItems:"center",justifyContent:"center"}}>{lb}</div>,
-                  ...Array.from({length:10},(_,i)=>{
-                    if(p===0&&i===0&&step===0) return <div key={`c${p}${i}`} style={{textAlign:"center",fontSize:11,padding:"6px 2px",borderRadius:4,background:"rgba(100,116,139,0.3)",color:"#64748b"}}>.</div>;
-                    const obs=p<MLE_OBS.length&&i<MLE_OBS[0].length?MLE_OBS[p][i]:0;
-                    const exp=h.exp[p][i];
-                    if(step===0){
-                      return <div key={`c${p}${i}`} style={{textAlign:"center",fontSize:13,fontWeight:700,padding:"6px 2px",borderRadius:4,background:obs===1?"rgba(34,197,94,0.25)":"rgba(239,68,68,0.2)",color:"#f8fafc"}}>{obs}</div>;
-                    }
-                    const r=obs-exp;
-                    const intensity=Math.min(Math.abs(r)*3,1);
-                    const bg=Math.abs(r)<0.05?"rgba(34,197,94,0.15)":r>0?`rgba(34,197,94,${0.1+intensity*0.4})`:`rgba(239,68,68,${0.1+intensity*0.4})`;
-                    return <div key={`c${p}${i}`} style={{textAlign:"center",fontSize:11,padding:"6px 2px",borderRadius:4,background:bg,color:"#f8fafc"}}>{r>0?"+":""}{r.toFixed(2)}</div>;
-                  })]
-                )).flat()}
+          ):(
+            <div style={{position:"relative"}}>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px 16px",margin:"24px auto 0",maxWidth:1800}}>
+                {/* TOP LEFT: Expected Values */}
+                <div style={{border:"1px solid #1e293b",borderRadius:8,padding:"8px 10px"}}>
+                  <div style={{fontSize:15,fontWeight:700,color:"#38bdf8",marginBottom:4}}>Expected Values — P(correct)</div>
+                  <table style={{borderCollapse:"collapse",fontSize:f,width:"100%"}}>
+                    <thead><tr><th style={{width:26}}/>{MLE_ITEMS.map((it,i)=><th key={i} style={{textAlign:"center",color:"#f59e0b",fontWeight:600,padding:"2px",fontSize:f}}>{it}</th>)}<th style={{textAlign:"center",color:"#38bdf8",fontWeight:700,fontSize:f,borderLeft:"2px solid #334155",padding:"2px 5px"}}>β</th></tr></thead>
+                    <tbody>
+                      {MLE_LABELS.map((lb,p)=><tr key={p}><td style={{fontWeight:700,color:"#38bdf8",textAlign:"center",fontSize:f}}>{lb}</td>{Array.from({length:10},(_,i)=>{const exp=h.exp[p][i];return <td key={i} onMouseEnter={e=>tt(e,`P(${lb} on ${MLE_ITEMS[i]}) = e^(${h.ab[p].toFixed(1)}−${h.di[i].toFixed(1)}) / (1+e^(…)) = ${exp.toFixed(3)}`)} onMouseLeave={ttOff} style={{textAlign:"center",padding:"3px 1px",background:"rgba(56,189,248,0.04)",color:"#f8fafc",border:"1px solid #1e293b"}}>{exp.toFixed(2)}</td>})}<td style={{textAlign:"center",color:"#38bdf8",fontSize:f,fontWeight:700,borderLeft:"2px solid #334155",padding:"2px 5px"}}>{h.ab[p].toFixed(2)}</td></tr>)}
+                      <tr style={{borderTop:"2px solid #334155"}}><td style={{fontWeight:700,color:"#f59e0b",textAlign:"center",fontSize:f}}>δ</td>{MLE_ITEMS.map((_,i)=><td key={i} style={{textAlign:"center",color:"#f59e0b",fontSize:f,fontWeight:600}}>{h.di[i].toFixed(2)}</td>)}<td/></tr>
+                    </tbody>
+                  </table>
+                </div>
+                {/* TOP RIGHT: Variance */}
+                <div style={{border:"1px solid #1e293b",borderRadius:8,padding:"8px 10px"}}>
+                  <div style={{fontSize:15,fontWeight:700,color:"#94a3b8",marginBottom:4}}>Variance P(1−P) — Fisher Information</div>
+                  <table style={{borderCollapse:"collapse",fontSize:f,width:"100%"}}>
+                    <thead><tr><th style={{width:26}}/>{MLE_ITEMS.map((it,i)=><th key={i} style={{textAlign:"center",color:"#f59e0b",fontWeight:600,padding:"2px",fontSize:f}}>{it}</th>)}<th style={{textAlign:"center",color:"#94a3b8",fontWeight:700,fontSize:f,borderLeft:"2px solid #334155",padding:"2px 5px"}}>ΣVar</th></tr></thead>
+                    <tbody>
+                      {MLE_LABELS.map((lb,p)=><tr key={p}><td style={{fontWeight:700,color:"#38bdf8",textAlign:"center",fontSize:f}}>{lb}</td>{Array.from({length:10},(_,i)=>{const exp=h.exp[p][i];const v=exp*(1-exp);return <td key={i} onMouseEnter={e=>tt(e,`${exp.toFixed(3)} × ${(1-exp).toFixed(3)} = ${v.toFixed(4)}${v>0.2?" — high info":v<0.05?" — low info":""}`)} onMouseLeave={ttOff} style={{textAlign:"center",padding:"3px 1px",background:v>0.2?"rgba(34,197,94,0.06)":"rgba(148,163,184,0.03)",color:v>0.2?"#94a3b8":"#64748b",border:"1px solid #1e293b"}}>{v.toFixed(2)}</td>})}<td style={{textAlign:"center",color:"#94a3b8",fontSize:f,fontWeight:600,borderLeft:"2px solid #334155",padding:"2px 5px"}}>{pVarSums[p].toFixed(2)}</td></tr>)}
+                      <tr style={{borderTop:"2px solid #334155"}}><td style={{fontSize:f,color:"#94a3b8",fontWeight:700,textAlign:"center"}}>Σ</td>{iVarSums.map((v,i)=><td key={i} style={{textAlign:"center",color:"#94a3b8",fontSize:f,fontWeight:600}}>{v.toFixed(2)}</td>)}<td/></tr>
+                    </tbody>
+                  </table>
+                </div>
+                {/* BOTTOM LEFT: Residuals + adjustments */}
+                <div style={{border:"1px solid #1e293b",borderRadius:8,padding:"8px 10px"}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                    <div style={{fontSize:15,fontWeight:700,color:"#fbbf24"}}>Residuals (Observed − Expected)</div>
+                    <div style={{display:"flex",gap:4}}>
+                      <button onClick={e=>{e.stopPropagation();setMleView('person');}} style={{padding:"2px 10px",borderRadius:6,border:`1px solid ${isPerson?"#38bdf8":"#334155"}`,background:isPerson?"rgba(56,189,248,0.15)":"transparent",color:isPerson?"#38bdf8":"#64748b",cursor:"pointer",fontSize:12,fontWeight:600}}>Persons</button>
+                      <button onClick={e=>{e.stopPropagation();setMleView('item');}} style={{padding:"2px 10px",borderRadius:6,border:`1px solid ${!isPerson?"#f59e0b":"#334155"}`,background:!isPerson?"rgba(245,158,11,0.15)":"transparent",color:!isPerson?"#f59e0b":"#64748b",cursor:"pointer",fontSize:12,fontWeight:600}}>Items</button>
+                    </div>
+                  </div>
+                  <table style={{borderCollapse:"collapse",fontSize:f,width:"100%"}}>
+                    <thead><tr>
+                      <th style={{width:26}}/>
+                      {MLE_ITEMS.map((it,i)=><th key={i} style={{textAlign:"center",color:"#f59e0b",fontWeight:600,padding:"2px",fontSize:f}}>{it}</th>)}
+                      <th style={{textAlign:"center",color:"#fbbf24",fontWeight:700,fontSize:f,borderLeft:"2px solid #334155",padding:"2px 4px",opacity:isPerson?1:0.3}}>ΣRes</th>
+                      <th style={{textAlign:"center",color:"#22c55e",fontWeight:700,fontSize:f,padding:"2px 4px",opacity:isPerson?1:0.3}}>Δβ</th>
+                    </tr></thead>
+                    <tbody>
+                      {MLE_LABELS.map((lb,p)=>{const adj=pVarSums[p]>0?pResSums[p]/pVarSums[p]:0;return <tr key={p}>
+                        <td style={{fontWeight:700,color:"#38bdf8",textAlign:"center",fontSize:f}}>{lb}</td>
+                        {Array.from({length:10},(_,i)=>{const r=MLE_OBS[p][i]-h.exp[p][i];return <td key={i} onMouseEnter={e=>tt(e,`Obs ${MLE_OBS[p][i]} − Exp ${h.exp[p][i].toFixed(3)} = ${r>=0?"+":""}${r.toFixed(3)}`)} onMouseLeave={ttOff} style={{textAlign:"center",padding:"3px 1px",background:resBg(r),color:resClr(r),border:"1px solid #1e293b",fontWeight:600}}>{r>=0?"+":""}{r.toFixed(2)}</td>})}
+                        <td style={{textAlign:"center",color:"#fbbf24",fontSize:f,fontWeight:700,borderLeft:"2px solid #334155",padding:"2px 4px",background:isPerson?"rgba(251,191,36,0.12)":"rgba(251,191,36,0.03)",opacity:isPerson?1:0.3,transition:"opacity 0.3s"}}>{pResSums[p]>=0?"+":""}{pResSums[p].toFixed(3)}</td>
+                        <td style={{textAlign:"center",color:"#22c55e",fontSize:f,fontWeight:700,padding:"2px 4px",background:isPerson?"rgba(34,197,94,0.12)":"rgba(34,197,94,0.03)",opacity:isPerson?1:0.3,transition:"opacity 0.3s"}}>{adj>=0?"+":""}{adj.toFixed(3)}</td>
+                      </tr>})}
+                      {/* Item residual sums row */}
+                      <tr style={{borderTop:"2px solid #334155"}}>
+                        <td style={{fontSize:f,color:"#fbbf24",fontWeight:700,textAlign:"center"}}>ΣRes</td>
+                        {iResSums.map((r,i)=><td key={i} style={{textAlign:"center",color:"#fbbf24",fontSize:f,fontWeight:700,background:!isPerson?"rgba(251,191,36,0.12)":"rgba(251,191,36,0.03)",opacity:!isPerson?1:0.3,transition:"opacity 0.3s"}}>{r>=0?"+":""}{r.toFixed(2)}</td>)}
+                        <td style={{textAlign:"center",color:converged?"#22c55e":"#fbbf24",fontSize:f,fontWeight:700,borderLeft:"2px solid #334155",background:converged?"rgba(34,197,94,0.15)":"rgba(251,191,36,0.15)",padding:"3px 4px"}}>{(isPerson?totalResSumPersons:totalResSumItems).toFixed(3)}</td>
+                        <td/>
+                      </tr>
+                      {/* Item adjustment row */}
+                      <tr>
+                        <td style={{fontSize:f,color:"#22c55e",fontWeight:700,textAlign:"center"}}>Δδ</td>
+                        {MLE_OBS[0].map((_,i)=>{const adj=iVarSums[i]>0?-iResSums[i]/iVarSums[i]:0;return <td key={i} style={{textAlign:"center",color:"#22c55e",fontSize:f,fontWeight:700,background:!isPerson?"rgba(34,197,94,0.12)":"rgba(34,197,94,0.03)",opacity:!isPerson?1:0.3,transition:"opacity 0.3s"}}>{adj>=0?"+":""}{adj.toFixed(2)}</td>})}
+                        <td/><td/>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                {/* BOTTOM RIGHT: Formula + convergence */}
+                <div style={{border:"1px solid #1e293b",borderRadius:8,padding:"6px 12px",display:"flex",flexDirection:"column",justifyContent:"center",gap:6,opacity:showOverlay?0.1:1,transition:"opacity 0.3s"}}>
+                  <div style={{fontSize:16,color:"#f8fafc",padding:"10px 14px",background:"rgba(15,23,42,0.5)",borderRadius:8,textAlign:"center",lineHeight:1.8}}>
+                    <div style={{color:"#38bdf8",fontWeight:600,marginBottom:4}}>Person: β<sub>new</sub> = β<sub>old</sub> + ΣRes / ΣVar</div>
+                    <div style={{color:"#f59e0b",fontWeight:600}}>Item: δ<sub>new</sub> = δ<sub>old</sub> − ΣRes / ΣVar</div>
+                  </div>
+                  <div style={{fontSize:14,color:"#64748b",lineHeight:1.5,textAlign:"center"}}>
+                    Residuals = <em>direction</em>. Variance = <em>how far</em>.<br/>Persons and items adjust simultaneously.
+                  </div>
+                  {converged&&<div style={{padding:"8px 12px",borderRadius:8,background:"rgba(34,197,94,0.1)",border:"2px solid #22c55e",textAlign:"center"}}>
+                    <div style={{fontSize:16,color:"#22c55e",fontWeight:700}}>CONVERGED — these are your measurements</div>
+                  </div>}
+                </div>
               </div>
-              {step>0&&<div style={{textAlign:"center",fontSize:14,color:"#64748b",marginTop:8}}>Green = positive residual, Red = negative. Fading = converging.</div>}
+              {/* Overlay explanations — bordered paragraphs positioned over each matrix */}
+              {showOverlay&&<div style={{position:"absolute",inset:"0",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px 16px",maxWidth:1800,margin:"0 auto",zIndex:10,pointerEvents:"none"}}>
+                <div style={{border:"3px solid #38bdf8",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#38bdf8",lineHeight:1.8,textAlign:"center"}}>Each cell is the model's predicted probability of a correct response: e<sup>(β−δ)</sup> / (1+e<sup>(β−δ)</sup>). These are NOT observed — they are what the model thinks should happen given the current ability and difficulty estimates.</div>
+                </div>
+                <div style={{border:"3px solid #94a3b8",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#94a3b8",lineHeight:1.8,textAlign:"center"}}>Variance = P × (1−P). This is the Fisher information for each interaction. It is maximised when P = 0.5 (item difficulty matches person ability — most informative). The row and column sums are the total information available for adjusting each person and item estimate — this controls how far we dare to adjust.</div>
+                </div>
+                <div style={{border:"3px solid #fbbf24",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#fbbf24",lineHeight:1.8,textAlign:"center"}}>Residual = Observed − Expected. Positive means the person did better than predicted; negative means worse. The sum of residuals tells us which direction to adjust. The adjustment (Δβ) = ΣRes ÷ ΣVar. The variance determines how confident the step is. Items adjust simultaneously using column sums with the same logic.</div>
+                </div>
+                <div style={{border:"3px solid #f59e0b",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#f59e0b",lineHeight:1.8,textAlign:"center"}}>The residuals tell us the direction to move each estimate. The variance tells us how far. We divide sum of residuals by sum of variance to get the adjustment. This is Newton-Raphson: slope divided by curvature gives the optimal step. Persons and items are updated simultaneously, then we iterate until the adjustments are negligible.</div>
+                </div>
+              </div>}
             </div>
+          )}
+          {/* Controls + Show Explanations */}
+          <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:24}}>
+            <SlideButton onClick={e=>{e.stopPropagation();setMleStep(0);}} active={ms===0}>Raw Data</SlideButton>
+            {iterSteps.slice(1).map((it,i)=><SlideButton key={i} onClick={e=>{e.stopPropagation();setMleStep(i+1);}} active={ms===i+1} clr={it>=15?"#22c55e":undefined}>Iteration {it}</SlideButton>)}
           </div>
-          {/* Controls */}
-          <div style={{display:"flex",justifyContent:"center",gap:12,marginTop:12}}>
-            <SlideButton onClick={e=>{e.stopPropagation();setMleStep(0);}} active={step===0}>Raw Data</SlideButton>
-            {[1,2,3,4,5,6].map(s=><SlideButton key={s} onClick={e=>{e.stopPropagation();setMleStep(s);}} active={step===s}>Iteration {s}</SlideButton>)}
-          </div>
+          {ms>0&&<div style={{display:"flex",justifyContent:"center",marginTop:20}}>
+            <button onClick={e=>{e.stopPropagation();setShowOverlay(!showOverlay);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #f59e0b",background:showOverlay?"rgba(245,158,11,0.2)":"transparent",color:"#f59e0b",cursor:"pointer",fontSize:17,fontWeight:600}}>
+              {showOverlay?"Hide":"Show"} Explanations
+            </button>
+          </div>}
+          {/* Floating tooltip */}
+          {tooltip&&<div style={{position:"fixed",left:tooltip.x+12,top:tooltip.y-40,background:"rgba(15,23,42,0.95)",border:"1px solid #f59e0b",borderRadius:8,padding:"8px 14px",fontSize:13,color:"#f8fafc",maxWidth:400,zIndex:100,pointerEvents:"none",lineHeight:1.5}}>{tooltip.text}</div>}
         </div>
       );
     },

@@ -8,7 +8,7 @@ export const SLIDE_TITLES = [
   "Turns out we are a lot like potatoes",
   "What Is a Model?",
   "Maximum Likelihood Estimation: Autofocus",
-  "The Iteration Process",
+  "MLE Iteration Process in the Rasch Model",
   "Part 2: Reliability, Validity, and Fit",
   "Forget Everything You've Been Told About Reliability",
   "What Does Fit Mean?",
@@ -148,28 +148,34 @@ Click Locked. The bracket turns green.
 
 "Now let me show you what this actually looks like with real numbers."`,
 
-  // Slide — MLE: The Iteration
-  `This is the interactive demonstration. Step through slowly. Let the audience watch the numbers settle.
+  // Slide — MLE: The Iteration Process
+  `This is the full Moulton-style MLE demonstration. Take your time. Each click is one iteration. The audience needs to SEE the numbers settle.
 
-"Here's a small dataset — 9 persons, 10 items. Ones and zeros.
+Click Raw Data.
 
-"Here's a dataset based on the work of Mark Moulton — 9 persons, 10 items. Ones and zeros. Watch what happens."
+"Here is our response matrix — 9 persons labelled A through I, 10 items. Ones and zeros. On the right you can see the row totals — Person A got 8 correct, Person I got 2. The column totals show how many persons got each item right. Items 1 to 4 were easy. Items 9 and 10 were hard — only 1 correct each."
 
-Click Raw Data. "This is what we start with. A response matrix. Person A got 8 out of 9 items right. Person I got 2 out of 10. The question is: where does each person and item sit on the continuum?"
+"The initial ability and difficulty estimates on the right come from the simplest possible transformation: the log of the odds. Person A got 8 out of 9, so the log-odds is about 2.1. Person G got half right, so log-odds is 0. Person I got 2 out of 10, log-odds is negative. Same logic for items in reverse — easy items get negative difficulties, hard items get positive."
 
-"The initial estimates on the number line come from a simple transformation of the raw proportions — the log-odds. But these are crude. They're the rough marble block."
+"These are CRUDE starting points. Now watch what happens."
 
-Click Iteration 1. "Now watch what happens. The model computes expected values — what SHOULD have happened given these estimates. Then it computes residuals — the gap between observed and expected. And it adjusts every estimate to close those gaps."
+Click Iteration 1.
 
-"Look at the number line. The dots are shifting. The total residual is dropping."
+"Each cell now shows two numbers. The top number is the EXPECTED VALUE — the probability this person gets this item right, computed from the Rasch formula using current estimates. The bottom number in colour is the RESIDUAL — observed minus expected."
 
-Click through iterations 2, 3, 4. "Each pass refines the estimates. The residuals in the grid are fading — they're getting smaller. The person and item dots are settling into their final positions."
+"Red cells have large residuals — the predictions are still poor. Green cells are near zero — prediction matches reality. On the right, the estimates have shifted — the yellow arrows show movement. The total residual at the bottom has dropped."
 
-Click iterations 5, 6. "By now the total residual is very small. The dots have essentially stopped moving. We've converged."
+Click Iteration 2.
 
-"Watch the residual counter. It started large and dropped toward zero. That's the chisel getting finer and finer. When it reaches our threshold — when the next adjustment would be negligible — we stop. We've found the maximum likelihood estimates."
+"Second pass. Expected values recalculated with updated estimates. Residuals shrink further. The faded dots show where estimates WERE — you can see the refinement happening."
 
-"These final positions on the number line — those are your measurements. Persons and items, on the same conjoint scale, located with maximum precision."`,
+Click Iteration 3, 4.
+
+"Most residuals are green now. The total residual is much smaller. Estimates are barely moving."
+
+Click Iteration 5, 6.
+
+"Converged. The total residual is below threshold. Every person ability, every item difficulty, is at the point where predictions match observations as closely as possible. These are your measurements — jointly estimated on the same logit scale."`,
 
   // Section Break — Part 2
   `Pause. Let them settle. "Now we've seen how the model is built. The next question is: how do we know it's working? That's what reliability and fit are about."`,
