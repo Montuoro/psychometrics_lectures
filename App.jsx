@@ -156,7 +156,7 @@ export default function App(){
   },[currentSlide]);
 
   // Beetle grows exponentially: base scale 0.15, multiplied by 1.22^slide
-  const beetleScale = 0.15 * Math.pow(1.22, currentSlide);
+  const beetleScale = 0.30 * Math.pow(1.22, currentSlide);
   const progress = currentSlide/(SLIDE_COUNT-1);
 
   const slides = [
@@ -218,7 +218,7 @@ export default function App(){
     // ═══ SLIDE 3a — We Are Not Potatoes ═══
     ()=>(
       <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"10px 40px",gap:10}}>
-        <div style={{fontSize:84,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:28,letterSpacing:"-0.5px"}}>Turns out we <span style={{fontStyle:"italic"}}>are</span> a lot like potatoes</div>
+        <div style={{fontSize:74,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:28,letterSpacing:"-0.5px"}}>"...but we are not potatoes"</div>
         {/* Hero image */}
         <div style={{position:"relative",width:"100%",maxWidth:1500,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
           <img src="./potatoe.jpg" alt="Fundamental Equality of Person and Potato" style={{width:"100%",display:"block"}}/>
@@ -300,10 +300,28 @@ export default function App(){
                     </g>
                   ))}
                 </svg>
+                {/* Split-prism focus circle (Olympus OM-10 style) */}
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
+                  {/* The split prism circle */}
+                  <div style={{position:"relative",width:60,height:60}}>
+                    {/* Circle outline */}
+                    <div style={{position:"absolute",inset:0,border:`2px solid ${locked?"#22c55e":"rgba(255,255,255,0.6)"}`,borderRadius:"50%",transition:"border-color 0.8s",boxShadow:locked?"0 0 12px rgba(34,197,94,0.4)":"none"}}/>
+                    {/* Top half — shifts left when out of focus */}
+                    <div style={{position:"absolute",top:0,left:0,width:60,height:30,overflow:"hidden",borderRadius:"30px 30px 0 0"}}>
+                      <div style={{width:60,height:60,borderRadius:"50%",border:"1px solid rgba(255,255,255,0.3)",transform:`translateX(${locked?0:Math.min(b*0.8,12)}px)`,transition:"transform 0.8s ease"}}/>
+                    </div>
+                    {/* Bottom half — shifts right when out of focus */}
+                    <div style={{position:"absolute",bottom:0,left:0,width:60,height:30,overflow:"hidden",borderRadius:"0 0 30px 30px"}}>
+                      <div style={{width:60,height:60,borderRadius:"50%",border:"1px solid rgba(255,255,255,0.3)",marginTop:-30,transform:`translateX(${locked?0:-Math.min(b*0.8,12)}px)`,transition:"transform 0.8s ease"}}/>
+                    </div>
+                    {/* Centre split line */}
+                    <div style={{position:"absolute",top:"50%",left:0,right:0,height:1,background:locked?"#22c55e":"rgba(255,255,255,0.4)",transition:"background 0.8s"}}/>
+                  </div>
+                </div>
                 {/* Focus bracket overlay */}
                 <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
                   <div style={{width:locked?"45%":"60%",height:locked?"45%":"60%",border:`2px solid ${locked?"#22c55e":"#ef4444"}`,borderRadius:4,transition:"all 0.8s ease",boxShadow:locked?"0 0 20px rgba(34,197,94,0.4)":"none"}}>
-                    {locked&&<div style={{position:"absolute",top:-24,left:"50%",transform:"translateX(-50)",fontSize:14,color:"#22c55e",fontWeight:700,whiteSpace:"nowrap"}}>FOCUS LOCKED</div>}
+                    {locked&&<div style={{position:"absolute",top:-24,left:"50%",transform:"translateX(-50%)",fontSize:14,color:"#22c55e",fontWeight:700,whiteSpace:"nowrap"}}>FOCUS LOCKED</div>}
                   </div>
                 </div>
                 {/* Iteration counter overlay */}
@@ -724,8 +742,8 @@ export default function App(){
             <p style={{marginTop:20}}>This rigidity is what preserves invariance. It is what makes the Rasch model a <span style={{color:"#22c55e",fontWeight:600}}>measurement</span> model — not merely a statistical one.</p>
           </div>
           <div style={{maxWidth:1300,margin:"40px auto",padding:"32px 44px",background:"rgba(15,23,42,0.5)",borderRadius:16,borderLeft:"4px solid #22c55e"}}>
-            <div style={{fontSize:32,color:"#f8fafc",fontStyle:"italic",lineHeight:1.6}}>"I tried to make the data tell me what they were about, and not I should tell the data how they should behave. That's what statisticians usually do."</div>
-            <div style={{fontSize:22,color:"#22c55e",marginTop:14}}>— Georg Rasch, 1978</div>
+            <div style={{fontSize:32,color:"#f8fafc",fontStyle:"italic",lineHeight:1.6,textAlign:"center"}}>"I tried to make the data tell me what they were about, and not I should tell the data how they should behave. That's what statisticians usually do."</div>
+            <div style={{fontSize:22,color:"#22c55e",marginTop:14,textAlign:"center"}}>— Georg Rasch, 1978</div>
           </div>
         </div>
       </div>
@@ -755,8 +773,8 @@ export default function App(){
         </div>
         {/* Rasch quote below */}
         <div style={{maxWidth:1200,padding:"12px 28px",background:"rgba(15,23,42,0.5)",borderRadius:12,borderLeft:"4px solid #f59e0b",marginTop:4}}>
-          <div style={{fontSize:22,color:"#f8fafc",fontStyle:"italic",lineHeight:1.4}}>"My meeting with Julian Huxley, that assured me that this is really an important line of research. And I continued to stick to it — to individuals — ever since."</div>
-          <div style={{fontSize:16,color:"#f59e0b",marginTop:4}}>— Georg Rasch, 1978</div>
+          <div style={{fontSize:22,color:"#f8fafc",fontStyle:"italic",lineHeight:1.4,textAlign:"center"}}>"My meeting with Julian Huxley, that assured me that this is really an important line of research. And I continued to stick to it — to individuals — ever since."</div>
+          <div style={{fontSize:16,color:"#f59e0b",marginTop:4,textAlign:"center"}}>— Georg Rasch, 1978</div>
         </div>
       </div>
     ),
@@ -867,8 +885,8 @@ export default function App(){
               <div style={{fontSize:30,color:"#f8fafc",fontWeight:600,lineHeight:1.6}}>The Rasch model's exponential structure reflects how biological systems develop. Measurement must deal with the individual — and the exponential is nature's way of doing that.</div>
             </div>
             <div style={{padding:"24px 36px",background:"rgba(15,23,42,0.5)",borderRadius:16,borderLeft:"4px solid #22c55e"}}>
-              <div style={{fontSize:28,color:"#f8fafc",fontStyle:"italic",lineHeight:1.7}}>"I showed this to Julian Huxley, and he was <span style={{color:"#f59e0b",fontWeight:700}}>completely flabbergasted</span>."</div>
-              <div style={{fontSize:18,color:"#22c55e",marginTop:10}}>— Georg Rasch, 1978 interview with David Andrich</div>
+              <div style={{fontSize:28,color:"#f8fafc",fontStyle:"italic",lineHeight:1.7,textAlign:"center"}}>"I showed this to Julian Huxley, and he was <span style={{color:"#f59e0b",fontWeight:700}}>completely flabbergasted</span>."</div>
+              <div style={{fontSize:18,color:"#22c55e",marginTop:10,textAlign:"center"}}>— Georg Rasch, 1978 interview with David Andrich</div>
             </div>
           </div>
         </div>
@@ -891,7 +909,7 @@ export default function App(){
       {/* Slide content */}
       <div style={{width:"100%",height:"calc(100% - 70px)",overflow:"hidden",display:"flex",flexDirection:"column",justifyContent:"center"}}>{slides[currentSlide]()}</div>
       {/* Analogy overlay — rendered outside slide content to avoid flex centering issues */}
-      {showAnalogy&&<div onClick={e=>{e.stopPropagation();setShowAnalogy(false);}} style={{position:"fixed",top:"0.5%",left:"8%",width:"84%",height:"80%",display:"flex",flexDirection:"column",padding:"10px 16px",background:"rgba(15,23,42,0.99)",borderRadius:12,zIndex:50,cursor:"pointer",boxShadow:"0 0 60px rgba(0,0,0,0.8)"}}>
+      {showAnalogy&&<div onClick={e=>{e.stopPropagation();setShowAnalogy(false);}} style={{position:"fixed",top:"10%",left:"8%",width:"84%",height:"80%",display:"flex",flexDirection:"column",padding:"10px 16px",background:"rgba(15,23,42,0.99)",borderRadius:12,zIndex:50,cursor:"pointer",boxShadow:"0 0 60px rgba(0,0,0,0.8)"}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridTemplateRows:"1fr 1fr",gap:"14px 18px",flex:1}}>
           <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
             <div style={{borderRadius:8,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"90%",maxHeight:"78%"}}><img src="./sim.png" alt="Flight Simulator 2020" style={{width:"100%",display:"block"}}/></div>
@@ -933,7 +951,7 @@ export default function App(){
         <div style={{flex:1,height:8,background:"#1e293b",borderRadius:4,position:"relative",marginRight:20}}>
           <div style={{width:`${progress*100}%`,height:"100%",background:"linear-gradient(90deg,#166534,#4ade80)",borderRadius:4,transition:"width 0.4s"}}/>
           {/* Beetle on the track */}
-          <div style={{position:"absolute",bottom:10,left:`${progress*100}%`,transform:"translateX(-50%)",transition:"left 0.4s"}}><Beetle scale={beetleScale}/></div>
+          <div style={{position:"absolute",bottom:10,left:`${Math.min(progress*100,92)}%`,transform:"translateX(-50%)",transition:"left 0.4s"}}><Beetle scale={beetleScale}/></div>
         </div>
         <div style={{color:"#64748b",fontSize:18,marginRight:20}}>{currentSlide+1}/{SLIDE_COUNT}</div>
         <button onClick={e=>{e.stopPropagation();window.open("./src/presenter.html","presenter","width=900,height=700");}} style={{background:"none",border:"1px solid #334155",color:"#64748b",padding:"8px 16px",borderRadius:8,cursor:"pointer",fontSize:16}}>Presenter (P)</button>

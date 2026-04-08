@@ -80,7 +80,7 @@ Pause for effect.
 
 "The psychologists listened politely. And when he finished, there was silence. Then one person in the audience responded — and this was the ONLY response. They said:"
 
-Deliver with comic timing: "'This is all world-renowned... talks about weighing potatoes — but we are not potatoes.'"
+Deliver with comic timing: "'...but we are not potatoes.'"
 
 Let the audience react. Then deliver the punchline:
 
@@ -175,13 +175,17 @@ Click Iteration 2.
 
 "Second pass. Expected values recalculated with updated estimates. Residuals shrink further. The faded dots show where estimates WERE — you can see the refinement happening."
 
-Click Iteration 3, 4.
+Click Iteration 3, then Iteration 5.
 
 "Most residuals are green now. The total residual is much smaller. Estimates are barely moving."
 
-Click Iteration 5, 6.
+Click Iteration 10, then 15.
 
-"Converged. The total residual is below threshold. Every person ability, every item difficulty, is at the point where predictions match observations as closely as possible. These are your measurements — jointly estimated on the same logit scale."`,
+"The adjustments are now tiny. The estimates have almost settled."
+
+Click Iteration 20.
+
+"Converged. The maximum change in any estimate is below 0.001. Every person ability, every item difficulty, is at the point where predictions match observations as closely as possible. These are your measurements — jointly estimated on the same logit scale."`,
 
   // Section Break — Part 2
   `Pause. Let them settle. "Now we've seen how the model is built. The next question is: how do we know it's working? We'll look at discrimination, reliability, and validity."`,
@@ -338,11 +342,11 @@ Let the quote sit on screen.`,
 
 "Now I want to show you something beautiful."
 
-Pause. Let the Fibonacci spiral beetle image fill the screen.
+Pause. Let the Melbourne Museum image fill the screen.
 
-"You've seen images like this — organisms arranged in a spiral, each one larger than the last. Beetles, shells, ferns. The Fibonacci spiral. It's the visual signature of exponential growth."
+"This photograph stopped me in my tracks at the Melbourne Museum. Dung beetles and stag beetles, arranged in spirals by size — each one larger than the last. It's the visual signature of exponential growth."
 
-"Look at the beetle at the low end of the spiral. Tiny. Now look at the one at the top. Enormous. The absolute size increments get larger and larger and larger. That's exponential growth — each step is bigger than the last."
+"Look at the beetles at the small end. Tiny. Now look at the ones at the top. Enormous. The absolute size increments get larger and larger and larger. That's exponential growth — each step is bigger than the last."
 
 "But here's the key: the RELATIVE growth — each increment as a proportion of the current size — is CONSTANT. The beetle doubles, then doubles again, then doubles again. The ratio is the same every time."
 
