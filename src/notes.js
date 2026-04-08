@@ -4,14 +4,15 @@ export const SLIDE_TITLES = [
   "Title",
   "Where We Left Off",
   "Part 1: Building the Model",
-  "Items as Windows",
+  "The Whole and Its Parts",
   "Turns out we are a lot like potatoes",
   "What Is a Model?",
   "Maximum Likelihood Estimation: Autofocus",
   "MLE Iteration Process in the Rasch Model",
-  "Part 2: Reliability, Validity, and Fit",
+  "Part 2: Discrimination, Reliability, and Validity",
+  "Discrimination and the Unit",
   "Forget Everything You've Been Told About Reliability",
-  "What Does Fit Mean?",
+  "Fit and Construct Validity",
   "Item Misfit",
   "Sources of Misfit",
   "The Rigidity Is the Point",
@@ -19,9 +20,8 @@ export const SLIDE_TITLES = [
   "The Beetle",
   "Three Views of the Same Thing",
   "Why Logits Are the Scale",
-  "Probability as Growth Under Constraint",
-  "Rasch Meets Huxley",
-  "The Beetle Revisited",
+  "Rasch Meets Fisher, Huxley",
+  "Thank You",
 ];
 
 export const NOTES = [
@@ -48,18 +48,22 @@ Don't explain the beetle yet. Let it sit there, tiny, at the bottom of the scree
   // Section Break — Part 1
   `Just pause here for a beat. Let the title sit. Then advance.`,
 
-  // Slide — Items as Windows
-  `This is the foundational conceptual slide.
+  // Slide — The Whole and Its Parts
+  `Let the image do the initial work. Pause and let them look at it.
 
-"Imagine you're trying to understand how well someone can read. You can't see reading ability directly — it's latent, it's hidden inside the person's head. So what do you do? You create items. Each item is like a window — it lets you see a small piece of the construct."
+"Look at this window. Hundreds of pieces. Different shapes, different colours, different sizes. No single piece tells you what the window is about. But together — when every piece fits with its neighbours — they form something whole. Something greater than any individual fragment."
 
-Point to the visual showing items at different difficulty levels all pointing at the same underlying trait.
+"That is what items do in an assessment."
 
-"A very easy item — like recognising a common word — gives you a view of the low end. A hard item — like interpreting an ambiguous passage — gives you a view of the high end. Each item captures a DIFFERENT LEVEL of the same construct."
+"Each item taps the same latent trait. Each item is a different shape — different content, different format, different level of demand. But they must FIT TOGETHER. When they do, a unidimensional measurement emerges from their combination."
 
-"When we combine them in an assessment, we expect them to form a cohesive whole in a unidimensional sense. Each item contributes a piece of the puzzle, and together they trace out the full continuum."
+"Now, this is more complex than measuring length with a ruler. When you measure length, you lay the ruler alongside the object and read the mark. It's direct. It's simple. But when we measure something like reading ability, or mathematical reasoning, or psychological wellbeing — we can't do that. There's no ruler to lay alongside someone's brain."
 
-Pause. "This is what we are MODELLING when we use the Rasch model. We're saying: these items, together, define a single dimension of ability. The model's job is to locate each item and each person on that dimension."`,
+"Instead, we assemble many items — many pieces of glass — and from the pattern of responses across all of them, a measurement emerges. It's more complex, but the endpoint is the same: a unidimensional scale. A single continuum on which persons and items are located."
+
+"The Rasch model is the framework that takes those fragments and builds the window. But the pieces must fit. If a piece doesn't belong — if an item isn't measuring the same construct — the image breaks. We'll see how we detect that when we talk about fit."
+
+Point to the key insight box: "The whole is greater than — and is formed by — the sum of its parts. But the parts must fit together. That's the fundamental requirement."`,
 
   // Slide — We Are Not Potatoes
   `This is the potato story slide. The image does most of the work — let it land visually before you speak.
@@ -155,9 +159,11 @@ Click Raw Data.
 
 "Here is our response matrix — 9 persons labelled A through I, 10 items. Ones and zeros. On the right you can see the row totals — Person A got 8 correct, Person I got 2. The column totals show how many persons got each item right. Items 1 to 4 were easy. Items 9 and 10 were hard — only 1 correct each."
 
-"The initial ability and difficulty estimates on the right come from the simplest possible transformation: the log of the odds. Person A got 8 out of 9, so the log-odds is about 2.1. Person G got half right, so log-odds is 0. Person I got 2 out of 10, log-odds is negative. Same logic for items in reverse — easy items get negative difficulties, hard items get positive."
+"The initial ability and difficulty estimates on the right come from the simplest possible transformation: the log of the odds. Take the raw proportion of items a person got correct, divide by the proportion incorrect — that gives you the odds. Then take the natural log. Person A got 8 out of 9, so the proportion is about 0.89, the odds are about 8:1, and the log-odds is about 2.1. Person G got half right — proportion 0.5, odds 1:1, log-odds zero. Person I got 2 out of 10 — proportion 0.2, odds 0.25:1, log-odds negative. Same logic for items but in reverse."
 
-"These are CRUDE starting points. Now watch what happens."
+"These initial logits are VERY rough. They're just the raw proportions converted to a log scale. They don't account for which specific items a person got right or which specific persons got an item right. They're the blurry starting image. The whole point of the iterative process is to refine these crude starting estimates into precise measurements."
+
+"Now watch what happens."
 
 Click Iteration 1.
 
@@ -178,7 +184,54 @@ Click Iteration 5, 6.
 "Converged. The total residual is below threshold. Every person ability, every item difficulty, is at the point where predictions match observations as closely as possible. These are your measurements — jointly estimated on the same logit scale."`,
 
   // Section Break — Part 2
-  `Pause. Let them settle. "Now we've seen how the model is built. The next question is: how do we know it's working? That's what reliability and fit are about."`,
+  `Pause. Let them settle. "Now we've seen how the model is built. The next question is: how do we know it's working? We'll look at discrimination, reliability, and validity."`,
+
+  // Discrimination: Conceptual
+  `This is the first time in our sessions that we're looking at an Item Characteristic Curve — an ICC. Take a moment to introduce it before getting into discrimination.
+
+"Before I talk about discrimination, let me explain what you're looking at. This is called an Item Characteristic Curve — an ICC. It's one of the most important visuals in Rasch measurement."
+
+"This is the MODEL — the simulation — not the observed data. It shows the predicted probability of a correct response for a single item, across all ability levels."
+
+"The x-axis is ability in logits. The y-axis is the probability of getting the item correct. Both curves represent the same item with a difficulty of zero logits — you can see they both cross the 0.5 probability line right at zero on the x-axis. That's what item difficulty means: the point where a person has a 50-50 chance."
+
+"As you move to the right — higher ability — the probability of success increases. As you move to the left — lower ability — it decreases. That S-shaped curve is the Rasch model's prediction for how this item behaves."
+
+"Now — the two curves show the SAME item difficulty but with DIFFERENT levels of discrimination. And that's what I want to talk about."
+
+"What is discrimination? In the Rasch model, it has a very specific meaning. Discrimination is the rate of change in the probability of a correct response as ability increases."
+
+Point to the green ICC. "Look at this steep curve. As ability increases, the probability of a correct response rises sharply. A small difference in ability — say, half a logit — makes a big difference in the outcome. This is high discrimination."
+
+Point to the red ICC. "Now look at this flatter curve. The probability changes more gradually with ability. A person well above the item difficulty still doesn't have a dramatically higher chance of success than someone near the difficulty. This is low discrimination."
+
+"Now here's the insight that most textbooks don't make explicit." Pause.
+
+"Discrimination determines the UNIT OF MEASUREMENT. Think about what a unit means. In physical measurement, a centimetre is a centimetre — it's the same size everywhere on the ruler. In Rasch measurement, the logit is the unit. And the size of that unit is determined by how steeply the probability changes with ability — that's discrimination."
+
+"A high-discriminating item measures in a SMALL unit — like millimetres. Precise. A low-discriminating item measures in a LARGE unit — like inches. Less precise. If your items have different levels of discrimination, they are measuring in different units. That's like having a ruler where some centimetres are bigger than others. You can't get a coherent measurement from that."
+
+"This is why the Rasch model requires uniform discrimination. It's not a limitation — it's a requirement for consistent measurement. One unit. One scale."
+
+"Think of it like a thirty-centimetre ruler where some centimetres are literally stretchier than others. Some are two millimetres wide, some are two centimetres wide. You'd never trust a measurement from that ruler. That's what happens when items have different discrimination — some measure in tiny precise units, others in big sloppy ones. The Rasch model says: all items must measure in the same unit. That's the rigidity."
+
+Now transition to the bottom box — the link to reliability.
+
+"And here's why this matters beyond just fit. Discrimination feeds directly into reliability."
+
+Point to the bottom box.
+
+"When items have high discrimination — steep gradients — they can detect fine differences between people. Person A at 1.2 logits and Person B at 1.5 logits will get measurably different patterns of responses. Their estimates pull apart. The person separation index goes up. Reliability goes up."
+
+"But when items have low discrimination — flat gradients — even people with genuinely different abilities get similar patterns. Their estimates get mushed together. The scores overlap. You can't tell them apart. The person separation index drops. Reliability drops."
+
+"So discrimination isn't just about individual items — it drives the entire reliability of the measurement. High discrimination means clear separation. Low discrimination means everything goes mushy."
+
+Now point to the C. diff images and rulers at the bottom.
+
+"Here are three C. diff bacteria — genuinely different lengths. Measure them with a millimetre ruler and they all round to zero. No separation. Measure them in micrometres and A, B, C sit at distinct points. The unit determines whether you can see the differences."
+
+"That's exactly what discrimination does. High discrimination gives you a fine-grained unit — persons separate clearly. Low discrimination gives you a coarse unit — persons get mushed together. And that feeds directly into reliability, which we'll look at next."`,
 
   // Reliability
   `This slide is critical. Most people you talk to have no idea what reliability really is. You need to dismantle the misconception and replace it with the correct understanding.
@@ -213,33 +266,35 @@ Now the key reframe:
 
 "A test where everyone scores 99% is perfectly 'repeatable.' Give it again, everyone scores 99% again. But it tells you almost nothing about where people actually stand. That is LOW reliability despite HIGH repeatability. That's why the traditional definition puts the cart before the horse."`,
 
-  // Slide — What Does Fit Mean?
-  `Transition to Part 2.
+  // Slide — Fit and Construct Validity
+  `This slide bridges reliability into validity. Start by reading the subtitle line on screen.
 
-"So now we have a model — a set of estimated abilities and difficulties. For every person-item combination, the model predicts a probability of correct response. But how do we know the model is WORKING?"
+"The Rasch model is a validity machine. It creates a simulation so we can examine whether items operate in unison, reflecting the overall model. That examination is fit — and fit is the quantitative heart of construct validity."
 
-"Fit is the answer. Fit means: how closely do the observed responses match the model's predictions?"
+"Since Messick in the 1980s, we've understood that construct validity is the overarching concept — content validity, predictive validity, concurrent validity are all just pieces of evidence for it. In the Rasch model, fit IS that evidence. If items fit the model, they're measuring the same construct. If they don't, something is wrong with the item, or with our understanding of the construct."
+
+"So — how do we check fit?"
 
 Point to the ICC with class interval proportions overlaid.
 
-"Here's an item characteristic curve — the S-shaped curve showing predicted probability of success at each ability level. And overlaid are the actual observed proportions from groups of persons at different ability levels."
+"Here's an item characteristic curve — the S-shaped curve from the model's simulation. And overlaid are the actual observed proportions from groups of persons at different ability levels."
 
-"When the dots sit close to the curve, the item fits. The data conform to the model's expectations."
+"When the dots sit close to the curve, the item fits — it's operating consistently with the other items in reflecting the construct."
 
-"When they don't — when the dots deviate systematically from the curve — we have misfit. And misfit tells us something important about that item."`,
+"When they deviate systematically — misfit — the item isn't measuring what the others are measuring. That's a validity problem."`,
 
   // Slide 6 — Item Misfit
-  `"There are three patterns of misfit to watch for."
+  `"There are two key patterns of misfit to watch for."
 
-Point to each panel as you describe it:
+Point to the left panel:
 
-"First: UNDER-DISCRIMINATION. The observed proportions are flatter than the curve. The item doesn't distinguish well between high and low ability persons. It's noisy — it's adding measurement error rather than measurement information."
+"First: LOW DISCRIMINATION. The observed proportions are flatter than the ICC. The item doesn't distinguish well between persons of different ability. It's noisy — it's adding measurement error rather than measurement information. As we discussed, this means the item is measuring in a larger, less precise unit than the other items."
 
-"Second: OVER-DISCRIMINATION. The observed proportions are STEEPER than the curve. The item discriminates too well — better than the model expects. In traditional test theory, you'd celebrate this. In Rasch measurement, it's a red flag. It suggests local dependence or some other violation of the model's assumptions."
+Point to the right panel:
 
-"Third: ERRATIC misfit. The proportions jump around with no systematic pattern. The item just isn't measuring anything coherent."
+"Second: HIGH DISCRIMINATION. The observed proportions are steeper than the ICC. The item discriminates MORE than the model expects. In traditional test theory, you might celebrate this. In Rasch measurement, it's a concern — because it means this item is measuring in a DIFFERENT unit from the others. It may also indicate local dependence or some other violation of the model's assumptions."
 
-"In all three cases, the Rasch model's ICC serves as the criterion — the theoretical expectation against which reality is judged."`,
+"In both cases, the ICC — the model's prediction — serves as the criterion. The theoretical curve is what we expect. The observed proportions are what we got. Misfit is the gap between them."`,
 
   // Slide 7 — Sources of Misfit
   `"What CAUSES misfit? There are several common sources, each of which we'll explore in future lectures. But let me flag them now."
@@ -325,54 +380,23 @@ Drag the slider slowly. "Odds explode upward. Logits move steadily — equal ste
 
 "This is why the log-odds scale is the measurement scale. It linearises the exponential — and linearity is where equal-interval measurement lives."`,
 
-  // Slide 12 — Probability as Growth Under Constraint
-  `"Now — probability. This is the piece people find hardest to place in the biological analogy. But I think it maps beautifully."
+  // Slide — Rasch Meets the Heavy Hitters
+  `This is the closing slide before questions. Let the E. coli GIF run — the audience is watching exponential growth happen in real time while you speak. Keep it slow and let it land.
 
-"In nature, no organism can grow forever. No matter how favourable the conditions, there's always resistance — predation, disease, resource limits. Growth approaches a ceiling but never reaches it."
+Point to the GIF. "What you're watching is E. coli — a colony of bacteria growing on a microscope slide. This is exponential growth. Real, biological, observable."
 
-"Probability works the same way. No matter how able a person is relative to an item, the probability of a correct response approaches 1 but never reaches it. There's always a chance of error — distraction, fatigue, misreading the question."
+"The Rasch model's exponential structure isn't arbitrary mathematics. It reflects how biological systems actually develop. Organisms grow exponentially. Brains build synaptic connections exponentially. The model works because it mirrors nature."
 
-"Mathematically, probability is just odds normalised: P equals odds divided by one plus odds. That 'plus one' in the denominator IS the constraint. It's environmental resistance. It's the ceiling that turns exponential growth into the S-curve."
+"Georg Rasch knew this. In 1935, he spent a year in London with Ronald Fisher. During that time he analysed crab shell data and found that growth segments followed precise straight lines on a log scale. He showed this to Julian Huxley — the biologist who had written the foundational work on exponential growth in biology."
 
-"Think of a growing organism — a young brain building synaptic connections. As it builds more connections, its capacity grows exponentially. But the PROBABILITY that it successfully navigates any particular challenge — any particular interaction with its environment — follows the sigmoid. It approaches certainty but never achieves it."
+Read the quote on screen: "'I showed this to Julian Huxley, and he was completely flabbergasted.'"
 
-"The Rasch model captures this. The odds — raw exponential capacity. The logits — the linear measurement of that capacity. The probability — what actually happens when capacity meets challenge."`,
+"Huxley realised his own work had been about populations. But Rasch's data was close to showing how the individual grows. And Rasch took that insight and ran with it — all the way to the model we've been studying today."
 
-  // Slide 13 — Rasch Meets Huxley
-  `This slide has real historical weight. Slow down.
+Pause. Let the statement sit.
 
-"This connection between the Rasch model and biological growth is not a modern invention. It goes back to Georg Rasch himself."
+"Measurement must deal with the individual. The exponential is nature's way of doing that. And the Rasch model is the formalisation of that principle."`,
 
-"In 1935, the young Danish mathematician Georg Rasch went to London to study with Ronald Fisher — the greatest statistician of the twentieth century. While there, he brought data on school children and on crabs — crustacean shell measurements sorted by size."
-
-"He plotted the crab data and found something remarkable: the growth segments, plotted on a log scale, followed precise straight lines radiating from a centre of growth."
-
-"He showed this to Julian Huxley — the biologist who had written 'Problems of Relative Growth' in 1932, the foundational work on allometric scaling. Huxley was, in Rasch's words, 'completely flabbergasted.'"
-
-Pause. Let the quote appear on screen.
-
-"Huxley realised that his own work had been about populations — statistical relationships. But Rasch's data was close to showing how the INDIVIDUAL grows."
-
-"Rasch said later, in a rare 1978 interview: 'My meeting with Julian Huxley, that assured me that this is really an important line of research. And I continued to stick to it — to individuals — ever since.'"
-
-"The Rasch model is not an arbitrary mathematical convenience. Its exponential structure reflects how biological systems actually develop. Rasch knew this. Huxley confirmed it. The model works because it mirrors nature."`,
-
-  // Slide 14 — The Beetle Revisited
-  `Point to the progress bar at the bottom. The beetle is now enormous compared to where it started.
-
-"You've been watching exponential growth this entire lecture."
-
-Pause and let them look.
-
-"At the start, the beetle was tiny. It's been growing with every slide — multiplied by the same factor each time. The RELATIVE growth has been constant. But the ABSOLUTE growth has accelerated."
-
-"If I asked you to measure the beetle's growth using its actual size at each step, you'd get an exponential curve — unequal intervals, impossible to interpret."
-
-"But if I asked you to measure it using the LOG of its size — the relative growth — you'd get a straight line. Equal intervals. Measurement."
-
-"That's odds and logits. That's the Rasch model."
-
-Final pause. "In the next session, we'll go deeper into the mechanics of person and item estimation, standard errors, and what happens at the extremes of the scale. But for today — remember the beetle. The exponential is nature. The logarithm is measurement. The probability is what happens when growth meets the real world."
-
-Hold for questions.`,
+  // The End
+  `Hold for questions. Let the slide sit.`,
 ];

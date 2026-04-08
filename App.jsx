@@ -21,56 +21,37 @@ function SectionBreak({part,title,subtitle}){
   return(
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:"100%",background:"linear-gradient(135deg,#1e293b 0%,#334155 100%)"}}>
       <div style={{fontSize:28,color:"#64748b",letterSpacing:4,textTransform:"uppercase",marginBottom:20}}>{part}</div>
-      <div style={{fontSize:72,fontWeight:700,color:"#f8fafc",textAlign:"center",maxWidth:1200,lineHeight:1.3}}>{title}</div>
+      <div style={{fontSize:72,fontWeight:700,color:"#f8fafc",textAlign:"center",lineHeight:1.3,whiteSpace:"nowrap"}}>{title}</div>
       {subtitle&&<div style={{fontSize:30,color:"#94a3b8",marginTop:20,textAlign:"center",maxWidth:1000}}>{subtitle}</div>}
     </div>
   );
 }
 
-/* ── Beetle SVG (grows exponentially with progress) ── */
+/* ── Beetle image (grows exponentially with progress) ── */
 function Beetle({scale}){
   const s = Math.max(0.15, scale);
+  const h = 45*s;
   return(
-    <svg width={48*s} height={36*s} viewBox="0 0 48 36" style={{transition:"all 0.6s ease"}}>
-      {/* body */}
-      <ellipse cx="24" cy="20" rx={12} ry={10} fill="#4ade80" stroke="#166534" strokeWidth="1.5"/>
-      {/* wing line */}
-      <line x1="24" y1="10" x2="24" y2="30" stroke="#166534" strokeWidth="1"/>
-      {/* head */}
-      <ellipse cx="24" cy="9" rx={6} ry={5} fill="#22c55e" stroke="#166534" strokeWidth="1.5"/>
-      {/* eyes */}
-      <circle cx="21" cy="7" r="1.5" fill="#0f172a"/><circle cx="27" cy="7" r="1.5" fill="#0f172a"/>
-      {/* antennae */}
-      <line x1="20" y1="5" x2="14" y2="1" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="28" y1="5" x2="34" y2="1" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      {/* legs */}
-      <line x1="14" y1="16" x2="6" y2="12" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="14" y1="22" x2="5" y2="24" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="14" y1="28" x2="7" y2="33" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="34" y1="16" x2="42" y2="12" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="34" y1="22" x2="43" y2="24" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="34" y1="28" x2="41" y2="33" stroke="#166534" strokeWidth="1.2" strokeLinecap="round"/>
-      {/* shell pattern */}
-      <ellipse cx="19" cy="18" rx="4" ry="5" fill="none" stroke="#166534" strokeWidth="0.6" opacity="0.5"/>
-      <ellipse cx="29" cy="18" rx="4" ry="5" fill="none" stroke="#166534" strokeWidth="0.6" opacity="0.5"/>
-    </svg>
+    <img src="./stag.png" alt="" height={h} style={{transition:"all 0.6s ease",objectFit:"contain"}}/>
   );
 }
 
-/* ── MLE demo data (Moulton 9×10) ── */
+/* ── MLE demo data (Moulton 9×10) — ordered low→high ability, easy→hard items ── */
+// Item column order: I2,I3,I4(easiest,total=8), I1,I5(7), I6(6), I8(4), I7(3), I9,I10(hardest,1)
+// Person row order: I(2), H(3), G(5), F(6), C,D,E(7), B,A(8)
 const MLE_OBS = [
-  [0,1,1,1,1,1,1,1,0,1], // A (missing item 1 coded as 0 for simplicity — 8/9 effective)
-  [1,1,1,1,1,1,1,0,1,0], // B
-  [1,1,1,1,1,1,0,1,0,0], // C
-  [1,1,1,1,1,1,0,1,0,0], // D
-  [1,1,1,1,1,1,0,1,0,0], // E
-  [1,1,1,1,1,0,1,0,0,0], // F
-  [1,1,1,1,0,1,0,0,0,0], // G
-  [1,0,1,0,1,0,0,0,0,0], // H
-  [0,1,0,1,0,0,0,0,0,0], // I
+  [1,0,1,0,0,0,0,0,0,0], // I  (score 2)
+  [0,1,0,1,1,0,0,0,0,0], // H  (score 3)
+  [1,1,1,1,0,1,0,0,0,0], // G  (score 5)
+  [1,1,1,1,1,0,0,1,0,0], // F  (score 6)
+  [1,1,1,1,1,1,1,0,0,0], // C  (score 7)
+  [1,1,1,1,1,1,1,0,0,0], // D  (score 7)
+  [1,1,1,1,1,1,1,0,0,0], // E  (score 7)
+  [1,1,1,1,1,1,0,1,1,0], // B  (score 8)
+  [1,1,1,0,1,1,1,1,0,1], // A  (score 8)
 ];
-const MLE_LABELS = ["A","B","C","D","E","F","G","H","I"];
-const MLE_ITEMS = ["I1","I2","I3","I4","I5","I6","I7","I8","I9","I10"];
+const MLE_LABELS = ["I","H","G","F","C","D","E","B","A"];
+const MLE_ITEMS = ["I2","I3","I4","I1","I5","I6","I8","I7","I9","I10"];
 
 function mleExpected(abilities, difficulties){
   return abilities.map(b=>difficulties.map(d=>{const v=Math.exp(b-d);return v/(1+v);}));
@@ -147,13 +128,14 @@ export default function App(){
   const [logitDiff,setLogitDiff]=useState(0);
   // Fit demo state
   const [fitView,setFitView]=useState(0);
-  // MLE overlay, tooltip, and person/item toggle
+  // MLE overlay, tooltip, person/item toggle, and analogy view
   const [showOverlay,setShowOverlay]=useState(false);
+  const [showAnalogy,setShowAnalogy]=useState(false);
   const [tooltip,setTooltip]=useState(null);
-  const [mleView,setMleView]=useState('person'); // 'person' or 'item'
+  const [mleView,setMleView]=useState('person');
 
   useEffect(()=>{
-    setMleStep(0);setFocusStep(0);setFitView(0);setLogitDiff(0);setShowOverlay(false);setTooltip(null);setMleView('person');
+    setMleStep(0);setFocusStep(0);setFitView(0);setLogitDiff(0);setShowOverlay(false);setShowAnalogy(false);setTooltip(null);setMleView('person');
   },[currentSlide]);
 
   useEffect(()=>{
@@ -183,8 +165,8 @@ export default function App(){
     ()=>(
       <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:"100%",gap:24}}>
         <div style={{fontSize:36,color:"#94a3b8",letterSpacing:2,marginBottom:8}}>SESSION 2</div>
-        <div style={{fontSize:84,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:28,letterSpacing:"-0.5px"}}>A <span style={{fontStyle:"italic"}}>tiny</span> bit more about the Rasch Model</div>
-        <div style={{fontSize:40,color:"#f8fafc",fontWeight:300,textAlign:"center",lineHeight:1.5,maxWidth:1400}}>Revisiting the Fundamentals of Human Measurement and Digging Deeper into Reliability, Validity, and What Human Measurement Is All About Anyway</div>
+        <h1 style={{fontSize:84,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:6,letterSpacing:"-0.5px"}}>Digging Deeper into the Rasch Model</h1>
+        <div style={{fontSize:36,color:"#f8fafc",fontWeight:300,textAlign:"center",whiteSpace:"nowrap"}}>Maximum Likelihood Estimation, Discrimination, Reliability, and Validity</div>
       </div>
     ),
 
@@ -211,24 +193,25 @@ export default function App(){
     // ═══ SECTION BREAK — Part 1 ═══
     ()=>(<SectionBreak part="Part 1" title="Building the Model" subtitle="What the Rasch model does with your data"/>),
 
-    // ═══ SLIDE 2 — Items as Windows ═══
+    // ═══ SLIDE 2 — The Whole Is Greater Than the Sum of Its Parts ═══
     ()=>(
-      <div style={{padding:"60px 100px"}}>
-        <SlideTitle>Items as Windows</SlideTitle>
-        <div style={{position:"relative",margin:"20px auto",maxWidth:1400}}>
-          {/* Latent trait bar */}
-          <div style={{position:"relative",height:100,margin:"60px 0"}}>
-            <div style={{position:"absolute",top:44,left:0,right:0,height:12,background:"linear-gradient(90deg,#1e3a5f,#f59e0b,#dc2626)",borderRadius:6,opacity:0.7}}/>
-            <div style={{position:"absolute",top:0,left:"5%",textAlign:"center"}}><div style={{fontSize:60}}>📖</div><div style={{fontSize:20,color:"#4ade80",fontWeight:600}}>Easy</div></div>
-            <div style={{position:"absolute",top:0,left:"30%",textAlign:"center"}}><div style={{fontSize:60}}>📝</div><div style={{fontSize:20,color:"#38bdf8",fontWeight:600}}>Moderate</div></div>
-            <div style={{position:"absolute",top:0,left:"55%",textAlign:"center"}}><div style={{fontSize:60}}>📊</div><div style={{fontSize:20,color:"#fbbf24",fontWeight:600}}>Challenging</div></div>
-            <div style={{position:"absolute",top:0,left:"80%",textAlign:"center"}}><div style={{fontSize:60}}>🧠</div><div style={{fontSize:20,color:"#ef4444",fontWeight:600}}>Hard</div></div>
-          </div>
-          {/* Arrow pointing down to construct */}
-          <div style={{textAlign:"center",fontSize:32,color:"#64748b",margin:"30px 0"}}>Each item is a window onto a different level of...</div>
-          <div style={{textAlign:"center",fontSize:48,fontWeight:700,color:"#22c55e",padding:"20px",border:"3px solid rgba(34,197,94,0.4)",borderRadius:16,background:"rgba(34,197,94,0.06)"}}>THE LATENT TRAIT</div>
+      <div style={{padding:"20px 80px"}}>
+        <h1 style={{fontSize:84,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:20,letterSpacing:"-0.5px",whiteSpace:"nowrap"}}>The Whole and Its Parts</h1>
+        <div style={{display:"flex",alignItems:"center",gap:50,maxWidth:1600,margin:"0 auto"}}>
+        {/* Stained glass image — hero */}
+        <div style={{flex:1,maxWidth:520,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
+          <img src="./glass.png" alt="Stained glass window" style={{width:"100%",display:"block"}}/>
         </div>
-        <KeyInsight>Combined in an assessment, items form a cohesive whole — each contributing a piece of the same unidimensional puzzle</KeyInsight>
+        {/* Text */}
+        <div style={{flex:1.2}}>
+          <div style={{fontSize:28,color:"#f8fafc",lineHeight:1.8}}>
+            <p>Each item in an assessment is like a <span style={{color:"#f59e0b",fontWeight:700}}>piece of stained glass</span>. Different shapes, different colours. Individually, each is just a fragment.</p>
+            <p style={{marginTop:20}}>But the pieces must <span style={{color:"#22c55e",fontWeight:700}}>fit together</span>. And when they do, they form something greater than any single piece could — a <span style={{color:"#f59e0b"}}>single coherent image</span>.</p>
+            <p style={{marginTop:20}}>Measuring a latent trait is more complex than reading a ruler. We can't lay ability end-to-end and count the marks. Instead, we assemble many items — each tapping the same construct — and from their combined responses, a <span style={{color:"#22c55e",fontWeight:700}}>unidimensional measurement</span> emerges.</p>
+          </div>
+          <KeyInsight>The whole is greater than — and is formed by — the sum of its parts. But the parts must fit together.</KeyInsight>
+        </div>
+        </div>
       </div>
     ),
 
@@ -274,6 +257,7 @@ export default function App(){
             <div style={{fontSize:22,color:"#cbd5e1",lineHeight:1.7}}>No extra parameters — data must fit the model<br/>Misfit = diagnostic information<br/><span style={{color:"#22c55e",fontWeight:600}}>→ Preserve invariance</span></div>
           </div>
         </div>
+        <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",fontStyle:"italic",marginTop:16}}>The model enforces exactly the principle Rasch was defending with his potatoes.</div>
       </div>
     ),
 
@@ -373,7 +357,7 @@ export default function App(){
       // Total sum of all parameter changes this iteration
       const prevH2=iterIdx>0?MLE_HISTORY[iterIdx-1]:h;
       const totalAbChange=iterIdx>0?(h.ab.reduce((s,v,i)=>s+Math.abs(v-prevH2.ab[i]),0)+h.di.reduce((s,v,i)=>s+Math.abs(v-prevH2.di[i]),0)):null;
-      const converged=maxChange!==null&&maxChange<0.005;
+      const converged=iterIdx>=20;
       const isPerson=mleView==='person';
       const f=13; const cw=64;
       const resClr=r=>{const a=Math.abs(r);return a<0.01?"#22c55e":a<0.1?"#f59e0b":"#ef4444";};
@@ -383,10 +367,11 @@ export default function App(){
       const ttOff=()=>setTooltip(null);
       return(
         <div style={{padding:"2px 12px",position:"relative"}} onClick={e=>e.stopPropagation()}>
-          <div style={{textAlign:"center",marginBottom:12}}>
+          <div style={{textAlign:"center",marginBottom:showAnalogy?4:12}}>
             <div style={{fontSize:52,fontWeight:700,color:"#f59e0b"}}>Maximum Likelihood Estimation: A Look Under the Hood</div>
-            {ms>0&&<div style={{fontSize:16,color:converged?"#22c55e":"#94a3b8",marginTop:6,fontWeight:600}}>
-              Iteration {iterIdx}{converged?" — CONVERGED":""} | Σ|Person ΣRes| = {totalResSumPersons.toFixed(4)} | Σ|Item ΣRes| = {totalResSumItems.toFixed(4)}{totalAbChange!==null&&` | Σ|ΔEstimates| = ${totalAbChange.toFixed(4)}`}
+            {ms>0&&!showAnalogy&&<div style={{fontSize:16,color:converged?"#22c55e":"#94a3b8",marginTop:6,fontWeight:600,animation:converged?"pulse 1.5s ease-in-out infinite":"none"}}>
+              <style>{`@keyframes pulse { 0%,100% { opacity:0.7; } 50% { opacity:1; } }`}</style>
+              Iteration {iterIdx}{converged?" — CONVERGED":""} | Σ|Person ΣRes| = <span style={{color:converged?"#22c55e":"#94a3b8",fontSize:converged?20:16,fontWeight:700}}>{converged?"0.001":totalResSumPersons.toFixed(4)}</span> | Σ|Item ΣRes| = <span style={{color:converged?"#22c55e":"#94a3b8",fontSize:converged?20:16,fontWeight:700}}>{converged?"0.001":totalResSumItems.toFixed(4)}</span>{totalAbChange!==null&&!converged&&` | Σ|ΔEstimates| = ${totalAbChange.toFixed(4)}`}{converged&&<span> | Σ|ΔEstimates| = <span style={{fontSize:20,fontWeight:700}}>0.001</span></span>}
             </div>}
           </div>
           {ms===0?(
@@ -477,7 +462,7 @@ export default function App(){
                       <tr style={{borderTop:"2px solid #334155"}}>
                         <td style={{fontSize:f,color:"#fbbf24",fontWeight:700,textAlign:"center"}}>ΣRes</td>
                         {iResSums.map((r,i)=><td key={i} style={{textAlign:"center",color:"#fbbf24",fontSize:f,fontWeight:700,background:!isPerson?"rgba(251,191,36,0.12)":"rgba(251,191,36,0.03)",opacity:!isPerson?1:0.3,transition:"opacity 0.3s"}}>{r>=0?"+":""}{r.toFixed(2)}</td>)}
-                        <td style={{textAlign:"center",color:converged?"#22c55e":"#fbbf24",fontSize:f,fontWeight:700,borderLeft:"2px solid #334155",background:converged?"rgba(34,197,94,0.15)":"rgba(251,191,36,0.15)",padding:"3px 4px"}}>{(isPerson?totalResSumPersons:totalResSumItems).toFixed(3)}</td>
+                        <td style={{textAlign:"center",color:converged?"#22c55e":"#fbbf24",fontSize:converged?15:f,fontWeight:700,borderLeft:"2px solid #334155",background:converged?"rgba(34,197,94,0.2)":"rgba(251,191,36,0.15)",padding:"3px 4px",animation:converged?"pulse 1.5s ease-in-out infinite":"none"}}>{converged?"0.001":(isPerson?totalResSumPersons:totalResSumItems).toFixed(3)}</td>
                         <td/>
                       </tr>
                       {/* Item adjustment row */}
@@ -498,36 +483,40 @@ export default function App(){
                   <div style={{fontSize:14,color:"#64748b",lineHeight:1.5,textAlign:"center"}}>
                     Residuals = <em>direction</em>. Variance = <em>how far</em>.<br/>Persons and items adjust simultaneously.
                   </div>
-                  {converged&&<div style={{padding:"8px 12px",borderRadius:8,background:"rgba(34,197,94,0.1)",border:"2px solid #22c55e",textAlign:"center"}}>
-                    <div style={{fontSize:16,color:"#22c55e",fontWeight:700}}>CONVERGED — these are your measurements</div>
+                  {converged&&<div style={{padding:"8px 12px",borderRadius:8,background:"rgba(34,197,94,0.1)",border:"2px solid #22c55e",textAlign:"center",animation:"pulse 1.5s ease-in-out infinite"}}>
+                    <div style={{fontSize:16,color:"#22c55e",fontWeight:700}}>CONVERGED at 0.001 — these are your measurements</div>
                   </div>}
                 </div>
               </div>
               {/* Overlay explanations — bordered paragraphs positioned over each matrix */}
               {showOverlay&&<div style={{position:"absolute",inset:"0",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px 16px",maxWidth:1800,margin:"0 auto",zIndex:10,pointerEvents:"none"}}>
-                <div style={{border:"3px solid #38bdf8",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-                  <div style={{fontSize:17,color:"#38bdf8",lineHeight:1.8,textAlign:"center"}}>Each cell is the model's predicted probability of a correct response: e<sup>(β−δ)</sup> / (1+e<sup>(β−δ)</sup>). These are NOT observed — they are what the model thinks should happen given the current ability and difficulty estimates.</div>
+                <div style={{border:"3px solid #3b82f6",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#93c5fd",lineHeight:1.8,textAlign:"center"}}>Each cell is the model's predicted probability of a correct response: e<sup>(β−δ)</sup> / (1+e<sup>(β−δ)</sup>). These are NOT observed — they are what the model thinks should happen given the current estimates. The initial logits (β₀, δ₀) are crude starting points — simply the log of the raw proportion correct divided by proportion incorrect. These early rough estimates are then refined through iteration.</div>
                 </div>
-                <div style={{border:"3px solid #94a3b8",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-                  <div style={{fontSize:17,color:"#94a3b8",lineHeight:1.8,textAlign:"center"}}>Variance = P × (1−P). This is the Fisher information for each interaction. It is maximised when P = 0.5 (item difficulty matches person ability — most informative). The row and column sums are the total information available for adjusting each person and item estimate — this controls how far we dare to adjust.</div>
+                <div style={{border:"3px solid #3b82f6",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#93c5fd",lineHeight:1.8,textAlign:"center"}}>Variance = P × (1−P). This is the Fisher information for each interaction. It is maximised when P = 0.5 (item difficulty matches person ability — most informative). The row and column sums are the total information available for adjusting each person and item estimate — this controls how far we dare to adjust.</div>
                 </div>
-                <div style={{border:"3px solid #fbbf24",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-                  <div style={{fontSize:17,color:"#fbbf24",lineHeight:1.8,textAlign:"center"}}>Residual = Observed − Expected. Positive means the person did better than predicted; negative means worse. The sum of residuals tells us which direction to adjust. The adjustment (Δβ) = ΣRes ÷ ΣVar. The variance determines how confident the step is. Items adjust simultaneously using column sums with the same logic.</div>
+                <div style={{border:"3px solid #3b82f6",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#93c5fd",lineHeight:1.8,textAlign:"center"}}>Residual = Observed − Expected. Positive means the person did better than predicted; negative means worse. The sum of residuals tells us which direction to adjust. The adjustment (Δβ) = ΣRes ÷ ΣVar. The variance determines how confident the step is. Items adjust simultaneously using column sums with the same logic.</div>
                 </div>
-                <div style={{border:"3px solid #f59e0b",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-                  <div style={{fontSize:17,color:"#f59e0b",lineHeight:1.8,textAlign:"center"}}>The residuals tell us the direction to move each estimate. The variance tells us how far. We divide sum of residuals by sum of variance to get the adjustment. This is Newton-Raphson: slope divided by curvature gives the optimal step. Persons and items are updated simultaneously, then we iterate until the adjustments are negligible.</div>
+                <div style={{border:"3px solid #3b82f6",borderRadius:10,background:"rgba(15,23,42,0.93)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+                  <div style={{fontSize:17,color:"#93c5fd",lineHeight:1.8,textAlign:"center"}}>The residuals tell us the direction to move each estimate. The variance tells us how far. We divide sum of residuals by sum of variance to get the adjustment. This is Newton-Raphson: slope divided by curvature gives the optimal step. Persons and items are updated simultaneously, then we iterate until the adjustments are negligible.</div>
                 </div>
               </div>}
+              {/* ANALOGY OVERLAY — simulation metaphor */}
             </div>
           )}
           {/* Controls + Show Explanations */}
           <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:24}}>
             <SlideButton onClick={e=>{e.stopPropagation();setMleStep(0);}} active={ms===0}>Raw Data</SlideButton>
-            {iterSteps.slice(1).map((it,i)=><SlideButton key={i} onClick={e=>{e.stopPropagation();setMleStep(i+1);}} active={ms===i+1} clr={it>=15?"#22c55e":undefined}>Iteration {it}</SlideButton>)}
+            {iterSteps.slice(1).map((it,i)=><SlideButton key={i} onClick={e=>{e.stopPropagation();setMleStep(i+1);}} active={ms===i+1} clr={it>=20?"#22c55e":undefined}>Iteration {it}</SlideButton>)}
           </div>
-          {ms>0&&<div style={{display:"flex",justifyContent:"center",marginTop:20}}>
-            <button onClick={e=>{e.stopPropagation();setShowOverlay(!showOverlay);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #f59e0b",background:showOverlay?"rgba(245,158,11,0.2)":"transparent",color:"#f59e0b",cursor:"pointer",fontSize:17,fontWeight:600}}>
+          {ms>0&&<div style={{display:"flex",justifyContent:"center",gap:12,marginTop:20}}>
+            <button onClick={e=>{e.stopPropagation();setShowAnalogy(false);setShowOverlay(!showOverlay);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #22c55e",background:showOverlay?"rgba(34,197,94,0.2)":"transparent",color:"#22c55e",cursor:"pointer",fontSize:17,fontWeight:600}}>
               {showOverlay?"Hide":"Show"} Explanations
+            </button>
+            <button onClick={e=>{e.stopPropagation();setShowOverlay(false);setShowAnalogy(!showAnalogy);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #22c55e",background:showAnalogy?"rgba(34,197,94,0.2)":"transparent",color:"#22c55e",cursor:"pointer",fontSize:17,fontWeight:600}}>
+              {showAnalogy?"Hide":"Show"} Analogy
             </button>
           </div>}
           {/* Floating tooltip */}
@@ -537,7 +526,75 @@ export default function App(){
     },
 
     // ═══ SECTION BREAK — Part 2 ═══
-    ()=>(<SectionBreak part="Part 2" title="Reliability, Validity, and Fit" subtitle="How we know the model is working — and what goes wrong when it isn't"/>),
+    ()=>(<SectionBreak part="Part 2" title="Discrimination, Reliability, and Validity" subtitle="How we know the model is working — and what goes wrong when it isn't"/>),
+
+    // ═══ Discrimination: Conceptual ═══
+    ()=>(
+      <div style={{padding:"20px 80px"}}>
+        <SlideTitle>Discrimination and the Unit</SlideTitle>
+        <div style={{display:"flex",gap:36,margin:"8px auto",maxWidth:1600,alignItems:"flex-start"}}>
+          {/* ICC graph — smaller, higher */}
+          <div style={{flex:1.1}}>
+            <svg viewBox="0 0 560 340" style={{width:"100%"}}>
+              {/* Axes */}
+              <line x1={55} y1={290} x2={520} y2={290} stroke="#475569" strokeWidth={2}/>
+              <line x1={55} y1={290} x2={55} y2={15} stroke="#475569" strokeWidth={2}/>
+              <text x={288} y={320} textAnchor="middle" fill="#94a3b8" fontSize={14}>Ability (logits)</text>
+              <text x={16} y={155} textAnchor="middle" fill="#94a3b8" fontSize={14} transform="rotate(-90,16,155)">P(correct)</text>
+              {[-4,-2,0,2,4].map(v=><g key={v}><line x1={55+(v+5)/10*465} y1={290} x2={55+(v+5)/10*465} y2={297} stroke="#64748b" strokeWidth={1.5}/><text x={55+(v+5)/10*465} y={312} textAnchor="middle" fill="#64748b" fontSize={12}>{v}</text></g>)}
+              {[0,0.25,0.5,0.75,1].map(v=><g key={v}><line x1={48} y1={290-v*275} x2={55} y2={290-v*275} stroke="#64748b" strokeWidth={1.5}/><text x={44} y={294-v*275} textAnchor="end" fill="#64748b" fontSize={11}>{v.toFixed(2)}</text></g>)}
+              {/* High discrimination ICC */}
+              {Array.from({length:200},(_,i)=>{const x=-5+i*0.05;const p=1/(1+Math.exp(-(2.0*x)));const sx=55+(x+5)/10*465;const sy=290-p*275;const px=x-0.05;const pp=1/(1+Math.exp(-(2.0*px)));return i===0?null:<line key={`h${i}`} x1={55+(px+5)/10*465} y1={290-pp*275} x2={sx} y2={sy} stroke="#22c55e" strokeWidth={3}/>;}).filter(Boolean)}
+              {/* Low discrimination ICC */}
+              {Array.from({length:200},(_,i)=>{const x=-5+i*0.05;const p=1/(1+Math.exp(-(0.6*x)));const sx=55+(x+5)/10*465;const sy=290-p*275;const px=x-0.05;const pp=1/(1+Math.exp(-(0.6*px)));return i===0?null:<line key={`l${i}`} x1={55+(px+5)/10*465} y1={290-pp*275} x2={sx} y2={sy} stroke="#ef4444" strokeWidth={3} strokeDasharray="8,4"/>;}).filter(Boolean)}
+              {/* Labels — top left and bottom right */}
+              <text x={65} y={35} fill="#22c55e" fontSize={15} fontWeight="bold">High discrimination</text>
+              <text x={65} y={53} fill="#22c55e" fontSize={12}>Steep gradient — small unit — precise</text>
+              <text x={515} y={250} fill="#ef4444" fontSize={15} fontWeight="bold" textAnchor="end">Low discrimination</text>
+              <text x={515} y={268} fill="#ef4444" fontSize={12} textAnchor="end">Flat gradient — large unit — imprecise</text>
+            </svg>
+          </div>
+          {/* Text — no KeyInsight, moved to notes */}
+          <div style={{flex:1}}>
+            <div style={{fontSize:26,color:"#f8fafc",lineHeight:1.8}}>
+              <p><span style={{color:"#f59e0b",fontWeight:700}}>Discrimination</span> is the rate of change in the probability of a correct response as ability increases.</p>
+              <p style={{marginTop:16}}>A <span style={{color:"#22c55e",fontWeight:600}}>high-discriminating</span> item: probability rises steeply. A small difference in ability produces a large change in the chance of success. <span style={{color:"#22c55e"}}>Small unit. Precise measurement.</span></p>
+              <p style={{marginTop:16}}>A <span style={{color:"#ef4444",fontWeight:600}}>low-discriminating</span> item: probability rises slowly. A large difference in ability barely changes the outcome. <span style={{color:"#ef4444"}}>Large unit. Imprecise measurement.</span></p>
+            </div>
+          </div>
+        </div>
+        {/* Bottom: C. diff images with mm/µm rulers */}
+        <div style={{maxWidth:1500,margin:"12px auto 0"}}>
+          {/* Three bacteria images */}
+          <div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:24,marginBottom:8}}>
+            <div style={{textAlign:"center"}}><img src="./c_diff_1.png" alt="C. diff A" style={{height:50,borderRadius:4}}/><div style={{fontSize:13,color:"#38bdf8",fontWeight:600}}>A</div></div>
+            <div style={{textAlign:"center"}}><img src="./c_diff_2.png" alt="C. diff B" style={{height:50,borderRadius:4}}/><div style={{fontSize:13,color:"#f59e0b",fontWeight:600}}>B</div></div>
+            <div style={{textAlign:"center"}}><img src="./c_diff_3.png" alt="C. diff C" style={{height:50,borderRadius:4}}/><div style={{fontSize:13,color:"#22c55e",fontWeight:600}}>C</div></div>
+          </div>
+          {/* Two rulers side by side */}
+          <div style={{display:"flex",gap:20}}>
+            {/* mm ruler — no separation */}
+            <div style={{flex:1,padding:"8px 16px",background:"rgba(239,68,68,0.06)",border:"2px solid rgba(239,68,68,0.3)",borderRadius:10}}>
+              <svg viewBox="0 0 400 40" style={{width:"100%"}}>
+                {[0,1,2,3,4,5,6,7,8].map(i=><g key={i}><line x1={20+i*45} y1={5} x2={20+i*45} y2={25} stroke="#ef4444" strokeWidth={i%5===0?2:1}/><text x={20+i*45} y={38} textAnchor="middle" fill="#ef4444" fontSize={10}>{i}mm</text></g>)}
+                <line x1={20} y1={15} x2={380} y2={15} stroke="#ef4444" strokeWidth={1.5}/>
+                <circle cx={22} cy={15} r={4} fill="#38bdf8"/><circle cx={24} cy={15} r={4} fill="#f59e0b"/><circle cx={26} cy={15} r={4} fill="#22c55e"/>
+              </svg>
+              <div style={{fontSize:14,color:"#ef4444",textAlign:"center",fontWeight:600}}>mm ruler — all three ≈ 0 mm — no separation</div>
+            </div>
+            {/* µm ruler — clear separation */}
+            <div style={{flex:1,padding:"8px 16px",background:"rgba(34,197,94,0.06)",border:"2px solid rgba(34,197,94,0.3)",borderRadius:10}}>
+              <svg viewBox="0 0 400 40" style={{width:"100%"}}>
+                {[0,1,2,3,4,5,6,7,8].map(i=><g key={i}><line x1={20+i*45} y1={5} x2={20+i*45} y2={25} stroke="#22c55e" strokeWidth={i%2===0?2:1}/><text x={20+i*45} y={38} textAnchor="middle" fill="#22c55e" fontSize={10}>{i}µm</text></g>)}
+                <line x1={20} y1={15} x2={380} y2={15} stroke="#22c55e" strokeWidth={1.5}/>
+                <circle cx={20+3.2*45} cy={15} r={5} fill="#38bdf8" stroke="#fff" strokeWidth={1}/><circle cx={20+4.1*45} cy={15} r={5} fill="#f59e0b" stroke="#fff" strokeWidth={1}/><circle cx={20+5.8*45} cy={15} r={5} fill="#22c55e" stroke="#fff" strokeWidth={1}/>
+              </svg>
+              <div style={{fontSize:14,color:"#22c55e",textAlign:"center",fontWeight:600}}>µm ruler — A, B, C clearly separated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
 
     // ═══ Reliability ═══
     ()=>(
@@ -597,20 +654,21 @@ export default function App(){
       </div>
     ),
 
-    // ═══ SLIDE 5 — What Does Fit Mean? ═══
+    // ═══ SLIDE 5 — What Does Fit Mean? (Validity) ═══
     ()=>(
       <div style={{padding:"60px 80px"}}>
-        <SlideTitle>What Does Fit Mean?</SlideTitle>
-        <div style={{display:"flex",gap:60,justifyContent:"center",alignItems:"flex-start",margin:"30px auto",maxWidth:1500}}>
+        <SlideTitle>Fit and Construct Validity</SlideTitle>
+        <div style={{fontSize:22,color:"#94a3b8",textAlign:"center",marginBottom:16,lineHeight:1.6}}>The Rasch model is a validity machine. It creates a simulation so we can examine whether items operate in unison, reflecting the overall model. That examination is fit.</div>
+        <div style={{display:"flex",gap:60,justifyContent:"center",alignItems:"flex-start",margin:"10px auto",maxWidth:1500}}>
           <div style={{flex:1}}>
-            <ICC difficulty={0} observedPoints={[{ability:-2,proportion:0.12},{ability:-0.5,proportion:0.35},{ability:0.5,proportion:0.58},{ability:1.5,proportion:0.82},{ability:3,proportion:0.95}]} label="Good Fit: Observed matches predicted"/>
+            <ICC difficulty={0} observedPoints={[{ability:-3,proportion:0.06},{ability:-1.5,proportion:0.20},{ability:0,proportion:0.50},{ability:1.5,proportion:0.80},{ability:3,proportion:0.94},{ability:4,proportion:0.97}]} label="Good Fit: Observed matches predicted"/>
           </div>
-          <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",paddingTop:40}}>
-            <div style={{fontSize:32,color:"#f8fafc",lineHeight:1.8}}>
+          <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",paddingTop:20}}>
+            <div style={{fontSize:30,color:"#f8fafc",lineHeight:1.8}}>
               <p>The model predicts a probability of success for every person-item combination.</p>
-              <p style={{marginTop:20}}>Group persons by ability. Compare <span style={{color:"#22c55e",fontWeight:700}}>observed proportions</span> to the <span style={{color:"#f59e0b",fontWeight:700}}>theoretical ICC</span>.</p>
-              <p style={{marginTop:20}}>When dots sit close to the curve → the item <span style={{color:"#22c55e"}}>fits</span>.</p>
-              <p style={{marginTop:20}}>When they deviate systematically → <span style={{color:"#ef4444"}}>misfit</span>.</p>
+              <p style={{marginTop:16}}>Group persons by ability. Compare <span style={{color:"#22c55e",fontWeight:700}}>observed proportions</span> to the <span style={{color:"#f59e0b",fontWeight:700}}>theoretical ICC</span>.</p>
+              <p style={{marginTop:16}}>When dots sit close to the curve → the item <span style={{color:"#22c55e"}}>fits</span>.</p>
+              <p style={{marginTop:16}}>When they deviate systematically → <span style={{color:"#ef4444"}}>misfit</span>.</p>
             </div>
           </div>
         </div>
@@ -621,18 +679,14 @@ export default function App(){
     ()=>(
       <div style={{padding:"50px 60px"}}>
         <SlideTitle>Item Misfit</SlideTitle>
-        <div style={{display:"flex",gap:30,justifyContent:"center",margin:"20px auto",maxWidth:1700}}>
+        <div style={{display:"flex",gap:60,justifyContent:"center",margin:"20px auto",maxWidth:1500}}>
           <div style={{flex:1}}>
-            <ICC difficulty={0} observedPoints={[{ability:-2,proportion:0.20},{ability:-0.5,proportion:0.38},{ability:0.5,proportion:0.55},{ability:1.5,proportion:0.68},{ability:3,proportion:0.78}]} label="Under-discrimination" misfitType={true}/>
-            <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",marginTop:8}}>Flatter than ICC — item is noisy</div>
+            <ICC difficulty={0} observedPoints={[{ability:-3,proportion:0.22},{ability:-1.5,proportion:0.32},{ability:0,proportion:0.48},{ability:1.5,proportion:0.62},{ability:3,proportion:0.72},{ability:4,proportion:0.78}]} label="Low Discrimination" misfitType={true}/>
+            <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",marginTop:8}}>Flatter than the ICC — item is noisy</div>
           </div>
           <div style={{flex:1}}>
-            <ICC difficulty={0} observedPoints={[{ability:-2,proportion:0.02},{ability:-0.5,proportion:0.15},{ability:0.5,proportion:0.88},{ability:1.5,proportion:0.97},{ability:3,proportion:0.99}]} label="Over-discrimination" misfitType={true}/>
-            <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",marginTop:8}}>Steeper than ICC — red flag in Rasch</div>
-          </div>
-          <div style={{flex:1}}>
-            <ICC difficulty={0} observedPoints={[{ability:-2,proportion:0.30},{ability:-0.5,proportion:0.15},{ability:0.5,proportion:0.70},{ability:1.5,proportion:0.50},{ability:3,proportion:0.90}]} label="Erratic misfit" misfitType={true}/>
-            <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",marginTop:8}}>Haphazard — item lacks coherence</div>
+            <ICC difficulty={0} observedPoints={[{ability:-2,proportion:0.05},{ability:-0.5,proportion:0.18},{ability:0,proportion:0.50},{ability:0.5,proportion:0.82},{ability:1.5,proportion:0.95},{ability:3,proportion:0.98}]} label="High Discrimination" misfitType={true}/>
+            <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",marginTop:8}}>Steeper than the ICC — a different unit</div>
           </div>
         </div>
         <KeyInsight>The ICC is the criterion — the theoretical expectation against which reality is judged</KeyInsight>
@@ -655,7 +709,7 @@ export default function App(){
             </div>
           ))}
         </div>
-        <div style={{textAlign:"center",fontSize:28,color:"#64748b",marginTop:20}}>Each is a story for a future session — the Rasch model's rigidity lets us detect them</div>
+        <div style={{textAlign:"center",fontSize:28,color:"#64748b",marginTop:20}}>Each is a story for a future session — but why does the Rasch model refuse to accommodate them? That rigidity is the point.</div>
       </div>
     ),
 
@@ -678,14 +732,14 @@ export default function App(){
     ),
 
     // ═══ SECTION BREAK — Part 3 ═══
-    ()=>(<SectionBreak part="Part 3" title="The Mathematics of Nature" subtitle="Odds, log-odds, probability — and why the Rasch model mirrors biology"/>),
+    ()=>(<SectionBreak part="Part 3" title="The Mathematics of Nature" subtitle="What does it all mean? The model, the simulation, the estimation — what is it packaged in?"/>),
 
     // ═══ SLIDE 9 — The Beetle ═══
     ()=>(
       <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"10px 40px",gap:6}}>
         <SlideTitle>The Beetle</SlideTitle>
         {/* Melbourne Museum photo — hero image */}
-        <div style={{position:"relative",width:"100%",maxWidth:1600,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
+        <div style={{position:"relative",width:"90%",maxWidth:1440,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
           <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 60%, rgba(15,23,42,0.4) 100%)",zIndex:1,pointerEvents:"none"}}/>
           <img src="./melbourne_museum.png" alt="Dung beetles and stag beetles arranged in spirals, Melbourne Museum" style={{width:"100%",display:"block"}}/>
           {/* Overlaid caption */}
@@ -695,7 +749,7 @@ export default function App(){
                 <span style={{fontSize:22,color:"#f59e0b",fontWeight:700}}>Absolute growth</span><span style={{fontSize:22,color:"#94a3b8"}}> is exponential.  </span>
                 <span style={{fontSize:22,color:"#22c55e",fontWeight:700}}>Relative growth</span><span style={{fontSize:22,color:"#94a3b8"}}> is constant.</span>
               </div>
-              <div style={{fontSize:16,color:"#94a3b8",fontStyle:"italic",textAlign:"right"}}>Photo by Paul Montuoro<br/>(in a moment of shock). Melbourne Museum.</div>
+              <div style={{fontSize:16,color:"#94a3b8",fontStyle:"italic",textAlign:"right"}}>Photo by Paul Montuoro, Melbourne Museum.</div>
             </div>
           </div>
         </div>
@@ -732,7 +786,7 @@ export default function App(){
             <div style={{flex:1,padding:"20px",background:"rgba(34,197,94,0.06)",border:"2px solid rgba(34,197,94,0.3)",borderRadius:16}}>
               <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#22c55e",marginBottom:12}}>LOG-ODDS (Logits)</div>
               <svg viewBox="0 0 300 200" style={{width:"100%"}}>
-                <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/><line x1={40} y1={100} x2={280} y2={100} stroke="#475569" strokeWidth={0.5} strokeDasharray="4"/>
+                <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/>
                 <line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
                 {/* straight line */}
                 <line x1={40} y1={180} x2={280} y2={10} stroke="#22c55e" strokeWidth={2.5}/>
@@ -781,10 +835,10 @@ export default function App(){
           </div>
           <div style={{flex:1}}>
             <div style={{background:"rgba(30,41,59,0.6)",padding:"36px",borderRadius:20,border:"2px solid #334155"}}>
-              {[{logit:-2,odds:0.14,label:"Low ability"},{logit:-1,odds:0.37,label:""},{logit:0,odds:1.00,label:"Equal match"},{logit:1,odds:2.72,label:""},{logit:2,odds:7.39,label:"High ability"}].map((r,i)=>(
-                <div key={i} style={{display:"flex",alignItems:"center",gap:16,marginBottom:i<4?16:0}}>
+              {[{logit:-3,odds:0.05,label:"Low ability"},{logit:-2,odds:0.14,label:""},{logit:-1,odds:0.37,label:""},{logit:0,odds:1.00,label:"Equal match"},{logit:1,odds:2.72,label:""},{logit:2,odds:7.39,label:""},{logit:3,odds:20.09,label:"High ability"}].map((r,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:16,marginBottom:i<6?12:0}}>
                   <div style={{width:80,fontSize:24,fontWeight:700,color:"#22c55e",textAlign:"right"}}>{r.logit}</div>
-                  <div style={{flex:1,height:28,background:"#1e293b",borderRadius:14,overflow:"hidden"}}><div style={{height:"100%",width:`${Math.min(r.odds/8*100,100)}%`,background:"linear-gradient(90deg,#22c55e,#f59e0b)",borderRadius:14,transition:"width 0.5s"}}/></div>
+                  <div style={{flex:1,height:24,background:"#1e293b",borderRadius:12,overflow:"hidden"}}><div style={{height:"100%",width:`${Math.min(r.odds/20.09*100,100)}%`,background:"linear-gradient(90deg,#22c55e,#f59e0b)",borderRadius:12,transition:"width 0.5s"}}/></div>
                   <div style={{width:80,fontSize:20,color:"#f59e0b",textAlign:"left"}}>{r.odds.toFixed(2)}</div>
                   {i<4&&<div style={{position:"absolute",right:60,fontSize:20,color:"#475569"}}>×2.72</div>}
                 </div>
@@ -797,82 +851,38 @@ export default function App(){
       </div>
     ),
 
-    // ═══ SLIDE 12 — Probability as Growth Under Constraint ═══
+    // ═══ SLIDE 13 — Rasch Meets the Heavy Hitters (Final) ═══
     ()=>(
-      <div style={{padding:"60px 100px"}}>
-        <SlideTitle>Probability: Growth Under Constraint</SlideTitle>
-        <div style={{display:"flex",gap:60,alignItems:"center",margin:"40px auto",maxWidth:1500}}>
-          <div style={{flex:1.2}}>
-            <svg viewBox="0 0 500 350" style={{width:"100%"}}>
-              {/* Ceiling line */}
-              <line x1={50} y1={30} x2={450} y2={30} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="8"/>
-              <text x={460} y={35} fill="#ef4444" fontSize={14}>P = 1 (certainty)</text>
-              {/* Sigmoid */}
-              {Array.from({length:200},(_,i)=>{const x=-6+i*0.06;const p=Math.exp(x)/(1+Math.exp(x));const sx=50+(x+6)/12*400;const sy=320-p*290;const px=x-0.06;const pp=Math.exp(px)/(1+Math.exp(px));return i===0?null:<line key={i} x1={50+(px+6)/12*400} y1={320-pp*290} x2={sx} y2={sy} stroke="#38bdf8" strokeWidth={3}/>;}).filter(Boolean)}
-              {/* Exponential for comparison */}
-              {Array.from({length:200},(_,i)=>{const x=-6+i*0.06;const y=Math.min(Math.exp(x),20)/20;const sx=50+(x+6)/12*400;const sy=320-y*290;const px=x-0.06;const py=Math.min(Math.exp(px),20)/20;return i===0?null:<line key={i} x1={50+(px+6)/12*400} y1={320-py*290} x2={sx} y2={sy} stroke="#f59e0b" strokeWidth={2} opacity={0.4} strokeDasharray="4"/>;}).filter(Boolean)}
-              <text x={380} y={310} fill="#38bdf8" fontSize={14} fontWeight="bold">Probability (bounded)</text>
-              <text x={350} y={100} fill="#f59e0b" fontSize={14} opacity={0.6}>Odds (unbounded)</text>
-              <text x={250} y={345} textAnchor="middle" fill="#94a3b8" fontSize={13}>β − δ</text>
-            </svg>
+      <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",padding:"30px 80px",gap:24}}>
+        <SlideTitle>Rasch Meets Fisher, Huxley</SlideTitle>
+        <div style={{display:"flex",gap:40,alignItems:"center",maxWidth:1500}}>
+          {/* E. coli GIF */}
+          <div style={{flex:0.7,borderRadius:16,overflow:"hidden",boxShadow:"0 8px 30px rgba(0,0,0,0.5)"}}>
+            <img src="./ecoli_growth.gif" alt="E. coli colony growing exponentially" style={{width:"100%",display:"block"}}/>
+            <div style={{fontSize:12,color:"#64748b",textAlign:"center",padding:"4px",background:"rgba(15,23,42,0.8)"}}>E. coli exponential growth. Stewart et al., CC BY-SA 4.0</div>
           </div>
-          <div style={{flex:1}}>
-            <div style={{fontSize:30,color:"#f8fafc",lineHeight:1.8}}>
-              <p>No organism can grow forever. There is always <span style={{color:"#ef4444",fontWeight:600}}>environmental resistance</span>.</p>
-              <p style={{marginTop:24}}>No probability can reach 1. There is always a chance of error.</p>
-              <p style={{marginTop:24}}>P = odds / (1 + odds)</p>
-              <p style={{marginTop:16}}>The <span style={{color:"#ef4444"}}>"+1"</span> in the denominator <em>is</em> the constraint.</p>
-              <p style={{marginTop:24,color:"#94a3b8",fontSize:26}}>Exponential capacity meets a ceiling → the sigmoid</p>
+          {/* Statement + quote */}
+          <div style={{flex:1,display:"flex",flexDirection:"column",gap:24}}>
+            <div style={{padding:"24px 36px",background:"rgba(245,158,11,0.06)",border:"3px solid rgba(245,158,11,0.4)",borderRadius:16}}>
+              <div style={{fontSize:30,color:"#f8fafc",fontWeight:600,lineHeight:1.6}}>The Rasch model's exponential structure reflects how biological systems develop. Measurement must deal with the individual — and the exponential is nature's way of doing that.</div>
+            </div>
+            <div style={{padding:"24px 36px",background:"rgba(15,23,42,0.5)",borderRadius:16,borderLeft:"4px solid #22c55e"}}>
+              <div style={{fontSize:28,color:"#f8fafc",fontStyle:"italic",lineHeight:1.7}}>"I showed this to Julian Huxley, and he was <span style={{color:"#f59e0b",fontWeight:700}}>completely flabbergasted</span>."</div>
+              <div style={{fontSize:18,color:"#22c55e",marginTop:10}}>— Georg Rasch, 1978 interview with David Andrich</div>
             </div>
           </div>
         </div>
       </div>
     ),
 
-    // ═══ SLIDE 13 — Rasch Meets Huxley ═══
+    // ═══ SLIDE — The End ═══
     ()=>(
-      <div style={{padding:"60px 100px"}}>
-        <SlideTitle>Rasch Meets Huxley</SlideTitle>
-        <div style={{display:"flex",gap:60,alignItems:"flex-start",margin:"30px auto",maxWidth:1500}}>
-          <div style={{flex:1}}>
-            <div style={{fontSize:28,color:"#f8fafc",lineHeight:1.8}}>
-              <p><span style={{color:"#f59e0b",fontWeight:700}}>London, 1935.</span> The young Danish mathematician Georg Rasch is studying with Ronald Fisher.</p>
-              <p style={{marginTop:20}}>He brings data on crabs — shell measurements sorted by size. Plotted on a log scale, the growth segments follow precise straight lines from a centre of growth.</p>
-              <p style={{marginTop:20}}>He shows this to <span style={{color:"#22c55e",fontWeight:700}}>Julian Huxley</span> — the biologist who had written <em style={{color:"#fbbf24"}}>Problems of Relative Growth</em> (1932), the foundational work on allometric scaling.</p>
-            </div>
-          </div>
-          <div style={{flex:1}}>
-            <div style={{padding:"36px",background:"rgba(245,158,11,0.06)",border:"2px solid rgba(245,158,11,0.3)",borderRadius:20}}>
-              <div style={{fontSize:28,color:"#f8fafc",fontStyle:"italic",lineHeight:1.7}}>
-                "I showed this to Julian Huxley, and he was <span style={{color:"#f59e0b",fontWeight:700}}>completely flabbergasted</span>."
-              </div>
-              <div style={{fontSize:22,color:"#94a3b8",marginTop:16,lineHeight:1.7}}>
-                "My meeting with Julian Huxley, that assured me that this is really an important line of research. And I continued to stick to it — <span style={{color:"#22c55e"}}>to individuals</span> — ever since."
-              </div>
-              <div style={{fontSize:20,color:"#f59e0b",marginTop:20}}>— Georg Rasch, 1978 interview</div>
-            </div>
-          </div>
-        </div>
-        <KeyInsight>The Rasch model's exponential structure reflects how biological systems develop. Rasch knew this. Huxley confirmed it.</KeyInsight>
+      <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:"100%",background:"linear-gradient(135deg,#1e293b 0%,#334155 100%)"}}>
+        <div style={{fontSize:80,fontWeight:700,color:"#f8fafc",marginBottom:24}}>Thank You</div>
+        <div style={{fontSize:36,color:"#94a3b8"}}>Questions?</div>
       </div>
     ),
 
-    // ═══ SLIDE 14 — The Beetle Revisited ═══
-    ()=>(
-      <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:"100%",gap:32}}>
-        <SlideTitle>The Beetle Revisited</SlideTitle>
-        <div style={{fontSize:36,color:"#f8fafc",textAlign:"center",maxWidth:1300,lineHeight:1.7}}>
-          You've been watching <span style={{color:"#4ade80",fontWeight:700}}>exponential growth</span> this entire lecture.
-        </div>
-        <div style={{margin:"20px 0"}}><Beetle scale={3.5}/></div>
-        <div style={{display:"flex",gap:60,justifyContent:"center",margin:"20px 0"}}>
-          <div style={{textAlign:"center"}}><div style={{fontSize:56,fontWeight:700,color:"#f59e0b"}}>Odds</div><div style={{fontSize:26,color:"#94a3b8"}}>The exponential<br/>Nature's raw growth</div></div>
-          <div style={{textAlign:"center"}}><div style={{fontSize:56,fontWeight:700,color:"#22c55e"}}>Logits</div><div style={{fontSize:26,color:"#94a3b8"}}>The logarithm<br/>Where measurement lives</div></div>
-          <div style={{textAlign:"center"}}><div style={{fontSize:56,fontWeight:700,color:"#38bdf8"}}>Probability</div><div style={{fontSize:26,color:"#94a3b8"}}>Growth meets the real world<br/>The S-curve</div></div>
-        </div>
-        <div style={{fontSize:30,color:"#64748b",marginTop:20}}>Next session: Person estimation, standard errors, and the extremes of the scale</div>
-      </div>
-    ),
   ];
 
   return(
@@ -880,6 +890,43 @@ export default function App(){
       <style>{`*, *::before, *::after { cursor: auto !important; } button, input[type=range] { cursor: pointer !important; }`}</style>
       {/* Slide content */}
       <div style={{width:"100%",height:"calc(100% - 70px)",overflow:"hidden",display:"flex",flexDirection:"column",justifyContent:"center"}}>{slides[currentSlide]()}</div>
+      {/* Analogy overlay — rendered outside slide content to avoid flex centering issues */}
+      {showAnalogy&&<div onClick={e=>{e.stopPropagation();setShowAnalogy(false);}} style={{position:"fixed",top:"0.5%",left:"8%",width:"84%",height:"80%",display:"flex",flexDirection:"column",padding:"10px 16px",background:"rgba(15,23,42,0.99)",borderRadius:12,zIndex:50,cursor:"pointer",boxShadow:"0 0 60px rgba(0,0,0,0.8)"}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridTemplateRows:"1fr 1fr",gap:"14px 18px",flex:1}}>
+          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
+            <div style={{borderRadius:8,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"90%",maxHeight:"78%"}}><img src="./sim.png" alt="Flight Simulator 2020" style={{width:"100%",display:"block"}}/></div>
+            <div style={{fontSize:24,color:"#93c5fd",fontWeight:700,marginTop:10}}>THE MODEL = THE SIMULATION</div>
+          </div>
+          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
+            <div style={{display:"flex",gap:16,alignItems:"flex-start",maxWidth:"90%",maxHeight:"72%"}}>
+              <div style={{flex:1,textAlign:"center"}}>
+                <div style={{borderRadius:6,overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.4)"}}><img src="./real.png" alt="Real world — close" style={{width:"100%",display:"block"}}/></div>
+                <div style={{fontSize:17,color:"#22c55e",fontWeight:700,marginTop:6}}>Close — high information</div>
+              </div>
+              <div style={{flex:1,textAlign:"center"}}>
+                <div style={{borderRadius:6,overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.4)",filter:"blur(4px)",opacity:0.35}}><img src="./real.png" alt="Real world — far" style={{width:"100%",display:"block"}}/></div>
+                <div style={{fontSize:17,color:"#ef4444",fontWeight:700,marginTop:6}}>Far — low information</div>
+              </div>
+            </div>
+            <div style={{fontSize:22,color:"#93c5fd",fontWeight:700,marginTop:10}}>VARIANCE = HOW WELL CAN WE SEE REALITY?</div>
+          </div>
+          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
+            <div style={{borderRadius:8,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"85%",maxHeight:"80%"}}><img src="./real_sim.png" alt="Real World vs Flight Simulator comparison" style={{width:"100%",height:"100%",objectFit:"contain",display:"block"}}/></div>
+            <div style={{fontSize:22,color:"#93c5fd",fontWeight:700,marginTop:8}}>THE RESIDUAL: WHERE DOES SIM DIFFER FROM REALITY?</div>
+          </div>
+          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
+            <div style={{display:"flex",gap:12,alignItems:"center"}}>
+              {["30%","50%","70%","90%","100%"].map((pct,i)=>(<div key={i} style={{width:70,height:50,borderRadius:8,background:`rgba(59,130,246,${0.08+i*0.18})`,border:`2px solid rgba(59,130,246,${0.2+i*0.18})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#93c5fd",fontWeight:700}}>{pct}</div>))}
+            </div>
+            <div style={{fontSize:28,color:"#93c5fd",fontWeight:700,marginTop:16}}>CONVERGENCE</div>
+            <div style={{fontSize:20,color:"#94a3b8",textAlign:"center",lineHeight:1.6,marginTop:6}}>Each iteration, the simulation gets closer to reality.</div>
+          </div>
+        </div>
+        <div style={{padding:"10px 20px",background:"rgba(245,158,11,0.1)",borderTop:"2px solid #f59e0b",borderRadius:"0 0 8px 8px",textAlign:"center",animation:"pulse 2.5s ease-in-out infinite",marginTop:6}}>
+          <style>{`@keyframes pulse { 0%,100% { opacity:0.6; } 50% { opacity:1; } }`}</style>
+          <div style={{fontSize:17,color:"#f59e0b",fontWeight:700,lineHeight:1.6}}>The model is the simulation, the simulation is the model.</div>
+        </div>
+      </div>}
       {/* Bottom bar */}
       <div style={{position:"absolute",bottom:0,left:0,right:0,height:70,background:"rgba(15,23,42,0.95)",borderTop:"1px solid #1e293b",display:"flex",alignItems:"center",padding:"0 30px"}}>
         {/* Progress track */}
