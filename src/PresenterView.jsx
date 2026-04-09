@@ -32,7 +32,7 @@ function FormattedNotes({ text, fontSize = 20 }) {
   };
 
   return (
-    <div style={{ fontSize, lineHeight: 1.8, whiteSpace: "pre-wrap" }}>
+    <div style={{ fontSize, lineHeight: 1.3, whiteSpace: "pre-line" }}>
       {parts.map((p, i) =>
         p.type === "speech"
           ? renderSegment(p.text, "#f8fafc", i)
@@ -47,7 +47,7 @@ export default function PresenterView() {
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.data.type === "slide-change") {
+      if (e.data?.type === "slide-change" || e.data?.type === "nav") {
         setCurrentSlide(e.data.slide);
       }
     };

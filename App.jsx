@@ -139,7 +139,7 @@ export default function App(){
   },[currentSlide]);
 
   useEffect(()=>{
-    const h=e=>{if(e.data?.type==="nav")setCurrentSlide(e.data.slide);};
+    const h=e=>{if(e.data?.type==="nav"||e.data?.type==="slide-change")setCurrentSlide(e.data.slide);};
     channel.addEventListener("message",h);
     return()=>channel.removeEventListener("message",h);
   },[]);
@@ -156,7 +156,7 @@ export default function App(){
   },[currentSlide]);
 
   // Beetle grows exponentially: base scale 0.15, multiplied by 1.22^slide
-  const beetleScale = 0.30 * Math.pow(1.22, currentSlide);
+  const beetleScale = 0.15 * Math.pow(1.22, currentSlide);
   const progress = currentSlide/(SLIDE_COUNT-1);
 
   const slides = [
@@ -195,22 +195,10 @@ export default function App(){
 
     // ═══ SLIDE 2 — The Whole Is Greater Than the Sum of Its Parts ═══
     ()=>(
-      <div style={{padding:"20px 80px"}}>
-        <h1 style={{fontSize:84,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:20,letterSpacing:"-0.5px",whiteSpace:"nowrap"}}>The Whole and Its Parts</h1>
-        <div style={{display:"flex",alignItems:"center",gap:50,maxWidth:1600,margin:"0 auto"}}>
-        {/* Stained glass image — hero */}
-        <div style={{flex:1,maxWidth:520,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"16px 60px",gap:12}}>
+        <SlideTitle>Greater Than the Sum</SlideTitle>
+        <div style={{maxWidth:580,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
           <img src="./glass.png" alt="Stained glass window" style={{width:"100%",display:"block"}}/>
-        </div>
-        {/* Text */}
-        <div style={{flex:1.2}}>
-          <div style={{fontSize:28,color:"#f8fafc",lineHeight:1.8}}>
-            <p>Each item in an assessment is like a <span style={{color:"#f59e0b",fontWeight:700}}>piece of stained glass</span>. Different shapes, different colours. Individually, each is just a fragment.</p>
-            <p style={{marginTop:20}}>But the pieces must <span style={{color:"#22c55e",fontWeight:700}}>fit together</span>. And when they do, they form something greater than any single piece could — a <span style={{color:"#f59e0b"}}>single coherent image</span>.</p>
-            <p style={{marginTop:20}}>Measuring a latent trait is more complex than reading a ruler. We can't lay ability end-to-end and count the marks. Instead, we assemble many items — each tapping the same construct — and from their combined responses, a <span style={{color:"#22c55e",fontWeight:700}}>unidimensional measurement</span> emerges.</p>
-          </div>
-          <KeyInsight>The whole is greater than — and is formed by — the sum of its parts. But the parts must fit together.</KeyInsight>
-        </div>
         </div>
       </div>
     ),
@@ -218,7 +206,7 @@ export default function App(){
     // ═══ SLIDE 3a — We Are Not Potatoes ═══
     ()=>(
       <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"10px 40px",gap:10}}>
-        <div style={{fontSize:74,fontWeight:700,color:"#f59e0b",textAlign:"center",marginBottom:28,letterSpacing:"-0.5px"}}>"...but we are not potatoes"</div>
+        <SlideTitle>People <span style={{fontStyle:"italic"}}>are</span> potatoes</SlideTitle>
         {/* Hero image */}
         <div style={{position:"relative",width:"100%",maxWidth:1500,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
           <img src="./potatoe.jpg" alt="Fundamental Equality of Person and Potato" style={{width:"100%",display:"block"}}/>
@@ -230,7 +218,7 @@ export default function App(){
     ()=>(
       <div style={{padding:"40px 70px"}}>
         <SlideTitle>What Is "a Model"?</SlideTitle>
-        <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:0,margin:"20px auto",maxWidth:1400}}>
+        <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:0,margin:"12px auto",maxWidth:1400}}>
           {[
             {step:"1",label:"Collect Data",desc:"Persons × Items\nOnes and zeros"},
             {step:"2",label:"Build Model",desc:"Estimate abilities\n& difficulties"},
@@ -301,7 +289,7 @@ export default function App(){
                   ))}
                 </svg>
                 {/* Split-prism focus circle (Olympus OM-10 style) */}
-                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",paddingLeft:"4%",paddingTop:"2%",pointerEvents:"none"}}>
                   {/* The split prism circle */}
                   <div style={{position:"relative",width:60,height:60}}>
                     {/* Circle outline */}
@@ -319,7 +307,7 @@ export default function App(){
                   </div>
                 </div>
                 {/* Focus bracket overlay */}
-                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",paddingLeft:"4%",paddingTop:"2%",pointerEvents:"none"}}>
                   <div style={{width:locked?"45%":"60%",height:locked?"45%":"60%",border:`2px solid ${locked?"#22c55e":"#ef4444"}`,borderRadius:4,transition:"all 0.8s ease",boxShadow:locked?"0 0 20px rgba(34,197,94,0.4)":"none"}}>
                     {locked&&<div style={{position:"absolute",top:-24,left:"50%",transform:"translateX(-50%)",fontSize:14,color:"#22c55e",fontWeight:700,whiteSpace:"nowrap"}}>FOCUS LOCKED</div>}
                   </div>
@@ -951,7 +939,7 @@ export default function App(){
         <div style={{flex:1,height:8,background:"#1e293b",borderRadius:4,position:"relative",marginRight:20}}>
           <div style={{width:`${progress*100}%`,height:"100%",background:"linear-gradient(90deg,#166534,#4ade80)",borderRadius:4,transition:"width 0.4s"}}/>
           {/* Beetle on the track */}
-          <div style={{position:"absolute",bottom:10,left:`${Math.min(progress*100,92)}%`,transform:"translateX(-50%)",transition:"left 0.4s"}}><Beetle scale={beetleScale}/></div>
+          <div style={{position:"absolute",bottom:10,left:`${progress*92}%`,transform:"translateX(-50%)",transition:"left 0.4s"}}><Beetle scale={beetleScale}/></div>
         </div>
         <div style={{color:"#64748b",fontSize:18,marginRight:20}}>{currentSlide+1}/{SLIDE_COUNT}</div>
         <button onClick={e=>{e.stopPropagation();window.open("./src/presenter.html","presenter","width=900,height=700");}} style={{background:"none",border:"1px solid #334155",color:"#64748b",padding:"8px 16px",borderRadius:8,cursor:"pointer",fontSize:16}}>Presenter (P)</button>

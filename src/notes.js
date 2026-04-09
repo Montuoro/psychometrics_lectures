@@ -61,7 +61,7 @@ Don't explain the beetle yet. Let it sit there, tiny, at the bottom of the scree
 
 "Instead, we assemble many items — many pieces of glass — and from the pattern of responses across all of them, a measurement emerges. It's more complex, but the endpoint is the same: a unidimensional scale. A single continuum on which persons and items are located."
 
-"The Rasch model is the framework that takes those fragments and builds the window. But the pieces must fit. If a piece doesn't belong — if an item isn't measuring the same construct — the image breaks. We'll see how we detect that when we talk about fit."
+"The Rasch model is the framework that takes those fragments and builds the window. But the pieces must fit. If a piece doesn't belong — if an item isn't measuring the same construct — the image begins to break down as a cohesive whole. We'll see how we detect that when we talk about fit."
 
 Point to the key insight box: "The whole is greater than — and is formed by — the sum of its parts. But the parts must fit together. That's the fundamental requirement."`,
 
@@ -89,22 +89,19 @@ Let the audience react. Then deliver the punchline:
 Point to the punchline on screen: "But when it comes to the PRINCIPLES of measurement — invariance, independence, objectivity — we kind of ARE like potatoes. The weight of a potato must be independent of what else is on the scale. The ability of a person must be independent of what else is on the test. The principle is identical."`,
 
   // Slide — What Is a Model?
-  `Now we get into the mechanics. This slide has two parts: the circularity diagram and the 2PL/3PL contrast.
+  `"So if measurement must be independent of irrelevant factors — if we really are like potatoes — how does the Rasch model enforce that?"
+
+Now we get into the mechanics. This slide has two parts: the circularity diagram and the 2PL/3PL contrast.
 
 PART 1 — THE CIRCULARITY
 
 "A lot of people ask me: what IS a model? And in the Rasch context, it's a genuinely interesting question — because there's a circularity to it."
 
 Point to the four-step diagram:
-
 "Step 1: We collect response data — persons answering items, ones and zeros."
-
 "Step 2: The Rasch model uses ALL of that data to build a measurement scale — it estimates where every person and every item sits on the continuum."
-
 "Step 3: But then — and this is the crucial part — the model becomes the CRITERION. Each individual item's data is checked against the model that was built from all items together."
-
 "Step 4: If an item doesn't conform — if its observed responses don't match what the model predicts — we have a problem. That item isn't measuring the same construct as the others."
-
 "So the model is built FROM the data, but the data must FIT the model. It's circular — and intentionally so."
 
 PART 2 — 2PL/3PL CONTRAST
