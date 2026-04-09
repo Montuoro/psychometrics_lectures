@@ -197,7 +197,7 @@ export default function App(){
     ()=>(
       <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"16px 60px",gap:12}}>
         <SlideTitle>Greater Than the Sum</SlideTitle>
-        <div style={{maxWidth:580,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
+        <div style={{maxWidth:540,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
           <img src="./glass.png" alt="Stained glass window" style={{width:"100%",display:"block"}}/>
         </div>
       </div>
@@ -217,7 +217,7 @@ export default function App(){
     // ═══ SLIDE 3b — What Is a Model? ═══
     ()=>(
       <div style={{padding:"40px 70px"}}>
-        <SlideTitle>What Is "a Model"?</SlideTitle>
+        <SlideTitle>What is a Model?</SlideTitle>
         <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:0,margin:"12px auto",maxWidth:1400}}>
           {[
             {step:"1",label:"Collect Data",desc:"Persons × Items\nOnes and zeros"},
@@ -235,17 +235,7 @@ export default function App(){
             </div>
           ))}
         </div>
-        <div style={{display:"flex",gap:28,margin:"24px auto",maxWidth:1400,alignItems:"stretch"}}>
-          <div style={{flex:1,padding:"24px 28px",background:"rgba(239,68,68,0.08)",border:"2px solid rgba(239,68,68,0.3)",borderRadius:16}}>
-            <div style={{fontSize:26,fontWeight:700,color:"#ef4444",marginBottom:8}}>Other Models (2PL, 3PL)</div>
-            <div style={{fontSize:22,color:"#cbd5e1",lineHeight:1.7}}>Add discrimination & guessing parameters<br/>Bend the model to fit the data<br/><span style={{color:"#ef4444",fontWeight:600}}>→ Destroy invariance</span></div>
-          </div>
-          <div style={{flex:1,padding:"24px 28px",background:"rgba(34,197,94,0.08)",border:"2px solid rgba(34,197,94,0.3)",borderRadius:16}}>
-            <div style={{fontSize:26,fontWeight:700,color:"#22c55e",marginBottom:8}}>Rasch Model</div>
-            <div style={{fontSize:22,color:"#cbd5e1",lineHeight:1.7}}>No extra parameters — data must fit the model<br/>Misfit = diagnostic information<br/><span style={{color:"#22c55e",fontWeight:600}}>→ Preserve invariance</span></div>
-          </div>
-        </div>
-        <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",fontStyle:"italic",marginTop:16}}>The model enforces exactly the principle Rasch was defending with his potatoes.</div>
+        <div style={{textAlign:"center",fontSize:22,color:"#94a3b8",fontStyle:"italic",marginTop:24}}>The model enforces exactly the principle Rasch was defending with his potatoes analogy.</div>
       </div>
     ),
 
@@ -373,9 +363,9 @@ export default function App(){
       const ttOff=()=>setTooltip(null);
       return(
         <div style={{padding:"2px 12px",position:"relative"}} onClick={e=>e.stopPropagation()}>
-          <div style={{textAlign:"center",marginBottom:showAnalogy?4:12}}>
+          <div style={{textAlign:"center",marginBottom:12}}>
             <div style={{fontSize:52,fontWeight:700,color:"#f59e0b"}}>Maximum Likelihood Estimation: A Look Under the Hood</div>
-            {ms>0&&!showAnalogy&&<div style={{fontSize:16,color:converged?"#22c55e":"#94a3b8",marginTop:6,fontWeight:600,animation:converged?"pulse 1.5s ease-in-out infinite":"none"}}>
+            {ms>0&&<div style={{fontSize:16,color:converged?"#22c55e":"#94a3b8",marginTop:6,fontWeight:600,animation:converged?"pulse 1.5s ease-in-out infinite":"none"}}>
               <style>{`@keyframes pulse { 0%,100% { opacity:0.7; } 50% { opacity:1; } }`}</style>
               Iteration {iterIdx}{converged?" — CONVERGED":""} | Σ|Person ΣRes| = <span style={{color:converged?"#22c55e":"#94a3b8",fontSize:converged?20:16,fontWeight:700}}>{converged?"0.001":totalResSumPersons.toFixed(4)}</span> | Σ|Item ΣRes| = <span style={{color:converged?"#22c55e":"#94a3b8",fontSize:converged?20:16,fontWeight:700}}>{converged?"0.001":totalResSumItems.toFixed(4)}</span>{totalAbChange!==null&&!converged&&` | Σ|ΔEstimates| = ${totalAbChange.toFixed(4)}`}{converged&&<span> | Σ|ΔEstimates| = <span style={{fontSize:20,fontWeight:700}}>0.001</span></span>}
             </div>}
@@ -518,11 +508,8 @@ export default function App(){
             {iterSteps.slice(1).map((it,i)=><SlideButton key={i} onClick={e=>{e.stopPropagation();setMleStep(i+1);}} active={ms===i+1} clr={it>=20?"#22c55e":undefined}>Iteration {it}</SlideButton>)}
           </div>
           {ms>0&&<div style={{display:"flex",justifyContent:"center",gap:12,marginTop:20}}>
-            <button onClick={e=>{e.stopPropagation();setShowAnalogy(false);setShowOverlay(!showOverlay);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #22c55e",background:showOverlay?"rgba(34,197,94,0.2)":"transparent",color:"#22c55e",cursor:"pointer",fontSize:17,fontWeight:600}}>
+            <button onClick={e=>{e.stopPropagation();setShowOverlay(!showOverlay);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #22c55e",background:showOverlay?"rgba(34,197,94,0.2)":"transparent",color:"#22c55e",cursor:"pointer",fontSize:17,fontWeight:600}}>
               {showOverlay?"Hide":"Show"} Explanations
-            </button>
-            <button onClick={e=>{e.stopPropagation();setShowOverlay(false);setShowAnalogy(!showAnalogy);}} style={{padding:"10px 28px",borderRadius:8,border:"2px solid #22c55e",background:showAnalogy?"rgba(34,197,94,0.2)":"transparent",color:"#22c55e",cursor:"pointer",fontSize:17,fontWeight:600}}>
-              {showAnalogy?"Hide":"Show"} Analogy
             </button>
           </div>}
           {/* Floating tooltip */}
@@ -604,57 +591,29 @@ export default function App(){
 
     // ═══ Reliability ═══
     ()=>(
-      <div style={{padding:"40px 80px"}}>
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"40px 80px",gap:40}}>
         <SlideTitle>Forget Everything You've Been Told About Reliability</SlideTitle>
-        <div style={{display:"flex",gap:50,margin:"16px auto",maxWidth:1500,alignItems:"flex-start"}}>
-          {/* Left — the misconception vs reality */}
-          <div style={{flex:1.1}}>
-            <div style={{padding:"24px 32px",background:"rgba(239,68,68,0.08)",border:"2px solid rgba(239,68,68,0.25)",borderRadius:16,marginBottom:20}}>
-              <div style={{fontSize:24,fontWeight:700,color:"#ef4444",marginBottom:8}}>The traditional view (cart before horse)</div>
-              <div style={{fontSize:24,color:"#cbd5e1",lineHeight:1.6}}>"Reliability is the repeatability of an assessment — if we gave the test again, would we get the same result?"</div>
-              <div style={{fontSize:22,color:"#94a3b8",marginTop:8}}>This is simplistic and misleading.</div>
-            </div>
-            <div style={{padding:"24px 32px",background:"rgba(34,197,94,0.08)",border:"2px solid rgba(34,197,94,0.25)",borderRadius:16}}>
-              <div style={{fontSize:24,fontWeight:700,color:"#22c55e",marginBottom:8}}>What reliability actually is</div>
-              <div style={{fontSize:24,color:"#f8fafc",lineHeight:1.6}}>How precisely we can <span style={{color:"#22c55e",fontWeight:700}}>separate persons</span> and place them according to their abilities — given the error in our measurements.</div>
-              <div style={{fontSize:22,color:"#94a3b8",marginTop:8}}>Repeatability is a <em>consequence</em> of good separation, not the definition of it.</div>
+        {/* Person Separation Index — centred */}
+        <div style={{padding:"36px 60px",background:"rgba(56,189,248,0.06)",border:"2px solid rgba(56,189,248,0.25)",borderRadius:20}}>
+          <div style={{fontSize:26,fontWeight:600,color:"#38bdf8",marginBottom:20,textAlign:"center"}}>Person Separation Index</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,padding:"8px 0"}}>
+            <span style={{fontSize:56,color:"#f8fafc",fontFamily:"Georgia, serif",fontStyle:"italic"}}>r</span>
+            <span style={{fontSize:44,color:"#64748b"}}>=</span>
+            <div style={{display:"inline-flex",flexDirection:"column",alignItems:"center"}}>
+              <div style={{fontSize:38,color:"#f8fafc",fontFamily:"Georgia, serif",padding:"0 16px",whiteSpace:"nowrap"}}>
+                <span style={{fontStyle:"italic"}}>σ</span><span style={{fontSize:24,verticalAlign:"super"}}>2</span><span style={{fontSize:22,color:"#38bdf8",verticalAlign:"sub"}}>β̂</span>
+                <span style={{margin:"0 10px",color:"#94a3b8"}}>−</span>
+                <span style={{fontStyle:"italic"}}>σ</span><span style={{fontSize:24,verticalAlign:"super"}}>2</span><span style={{fontSize:22,color:"#ef4444",verticalAlign:"sub"}}>ε</span>
+              </div>
+              <div style={{width:"100%",height:3,background:"#94a3b8",borderRadius:2}}/>
+              <div style={{fontSize:38,color:"#f8fafc",fontFamily:"Georgia, serif",padding:"6px 16px 0",whiteSpace:"nowrap"}}>
+                <span style={{fontStyle:"italic"}}>σ</span><span style={{fontSize:24,verticalAlign:"super"}}>2</span><span style={{fontSize:22,color:"#38bdf8",verticalAlign:"sub"}}>β̂</span>
+              </div>
             </div>
           </div>
-          {/* Right — equation + targeting */}
-          <div style={{flex:1}}>
-            {/* Person Separation Index */}
-            <div style={{padding:"24px 32px",background:"rgba(56,189,248,0.06)",border:"2px solid rgba(56,189,248,0.25)",borderRadius:16,marginBottom:20}}>
-              <div style={{fontSize:22,fontWeight:600,color:"#38bdf8",marginBottom:16}}>Person Separation Index</div>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16,padding:"8px 0"}}>
-                <span style={{fontSize:44,color:"#f8fafc",fontFamily:"Georgia, serif",fontStyle:"italic"}}>r</span>
-                <span style={{fontSize:36,color:"#64748b"}}>=</span>
-                {/* Fraction built with vertical flex */}
-                <div style={{display:"inline-flex",flexDirection:"column",alignItems:"center"}}>
-                  <div style={{fontSize:30,color:"#f8fafc",fontFamily:"Georgia, serif",padding:"0 12px",whiteSpace:"nowrap"}}>
-                    <span style={{fontStyle:"italic"}}>σ</span><span style={{fontSize:20,verticalAlign:"super"}}>2</span><span style={{fontSize:18,color:"#38bdf8",verticalAlign:"sub"}}>β̂</span>
-                    <span style={{margin:"0 8px",color:"#94a3b8"}}>−</span>
-                    <span style={{fontStyle:"italic"}}>σ</span><span style={{fontSize:20,verticalAlign:"super"}}>2</span><span style={{fontSize:18,color:"#ef4444",verticalAlign:"sub"}}>ε</span>
-                  </div>
-                  <div style={{width:"100%",height:3,background:"#94a3b8",borderRadius:2}}/>
-                  <div style={{fontSize:30,color:"#f8fafc",fontFamily:"Georgia, serif",padding:"4px 12px 0",whiteSpace:"nowrap"}}>
-                    <span style={{fontStyle:"italic"}}>σ</span><span style={{fontSize:20,verticalAlign:"super"}}>2</span><span style={{fontSize:18,color:"#38bdf8",verticalAlign:"sub"}}>β̂</span>
-                  </div>
-                </div>
-              </div>
-              <div style={{display:"flex",justifyContent:"center",gap:40,marginTop:16,fontSize:20}}>
-                <span><span style={{color:"#38bdf8",fontWeight:600}}>σ²β̂</span> <span style={{color:"#94a3b8"}}>= variance of ability estimates</span></span>
-                <span><span style={{color:"#ef4444",fontWeight:600}}>σ²ε</span> <span style={{color:"#94a3b8"}}>= mean squared standard errors</span></span>
-              </div>
-            </div>
-            {/* Targeting drives reliability */}
-            <div style={{padding:"24px 32px",background:"rgba(245,158,11,0.06)",border:"2px solid rgba(245,158,11,0.25)",borderRadius:16}}>
-              <div style={{fontSize:22,fontWeight:600,color:"#f59e0b",marginBottom:10}}>Why targeting drives reliability</div>
-              <div style={{fontSize:22,color:"#cbd5e1",lineHeight:1.7}}>
-                Items give <span style={{color:"#f59e0b",fontWeight:600}}>maximum information</span> when difficulty matches ability (P ≈ 0.5).
-                <br/><br/>
-                If items are too easy (P → 1) or too hard (P → 0), error explodes and we cannot tell people apart — no matter how "repeatable" the scores might be.
-              </div>
-            </div>
+          <div style={{display:"flex",justifyContent:"center",gap:48,marginTop:20,fontSize:22}}>
+            <span><span style={{color:"#38bdf8",fontWeight:600}}>σ²β̂</span> <span style={{color:"#94a3b8"}}>= variance of ability estimates</span></span>
+            <span><span style={{color:"#ef4444",fontWeight:600}}>σ²ε</span> <span style={{color:"#94a3b8"}}>= mean squared standard errors</span></span>
           </div>
         </div>
       </div>
@@ -721,18 +680,11 @@ export default function App(){
 
     // ═══ SLIDE 8 — The Rigidity Is the Point ═══
     ()=>(
-      <div style={{padding:"60px 100px"}}>
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"60px 100px",gap:40}}>
         <SlideTitle>The Rigidity Is the Point</SlideTitle>
-        <div style={{maxWidth:1400,margin:"30px auto"}}>
-          <div style={{fontSize:30,color:"#f8fafc",lineHeight:1.8}}>
-            <p>The Rasch model doesn't accommodate misbehaving data with extra parameters. It holds firm.</p>
-            <p style={{marginTop:20}}>If an item doesn't fit the model built from all items together, <span style={{color:"#ef4444",fontWeight:600}}>the item has a problem</span> — not the model.</p>
-            <p style={{marginTop:20}}>This rigidity is what preserves invariance. It is what makes the Rasch model a <span style={{color:"#22c55e",fontWeight:600}}>measurement</span> model — not merely a statistical one.</p>
-          </div>
-          <div style={{maxWidth:1300,margin:"40px auto",padding:"32px 44px",background:"rgba(15,23,42,0.5)",borderRadius:16,borderLeft:"4px solid #22c55e"}}>
-            <div style={{fontSize:32,color:"#f8fafc",fontStyle:"italic",lineHeight:1.6,textAlign:"center"}}>"I tried to make the data tell me what they were about, and not I should tell the data how they should behave. That's what statisticians usually do."</div>
-            <div style={{fontSize:22,color:"#22c55e",marginTop:14,textAlign:"center"}}>— Georg Rasch, 1978</div>
-          </div>
+        <div style={{maxWidth:1300,padding:"40px 56px",background:"rgba(15,23,42,0.5)",borderRadius:20,borderLeft:"4px solid #22c55e"}}>
+          <div style={{fontSize:36,color:"#f8fafc",fontStyle:"italic",lineHeight:1.7,textAlign:"center"}}>"I tried to make the data tell me what they were about, and not I should tell the data how they should behave. That's what statisticians usually do."</div>
+          <div style={{fontSize:24,color:"#22c55e",marginTop:16,textAlign:"center"}}>— Georg Rasch, 1978</div>
         </div>
       </div>
     ),
@@ -748,15 +700,9 @@ export default function App(){
         <div style={{position:"relative",width:"90%",maxWidth:1440,borderRadius:20,overflow:"hidden",boxShadow:"0 12px 60px rgba(0,0,0,0.7)"}}>
           <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 60%, rgba(15,23,42,0.4) 100%)",zIndex:1,pointerEvents:"none"}}/>
           <img src="./melbourne_museum.png" alt="Dung beetles and stag beetles arranged in spirals, Melbourne Museum" style={{width:"100%",display:"block"}}/>
-          {/* Overlaid caption */}
-          <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"16px 24px",background:"linear-gradient(transparent, rgba(15,23,42,0.85))",zIndex:2}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-              <div>
-                <span style={{fontSize:22,color:"#f59e0b",fontWeight:700}}>Absolute growth</span><span style={{fontSize:22,color:"#94a3b8"}}> is exponential.  </span>
-                <span style={{fontSize:22,color:"#22c55e",fontWeight:700}}>Relative growth</span><span style={{fontSize:22,color:"#94a3b8"}}> is constant.</span>
-              </div>
-              <div style={{fontSize:16,color:"#94a3b8",fontStyle:"italic",textAlign:"right"}}>Photo by Paul Montuoro, Melbourne Museum.</div>
-            </div>
+          {/* Photo credit */}
+          <div style={{position:"absolute",bottom:0,right:0,padding:"8px 16px",background:"linear-gradient(transparent, rgba(15,23,42,0.7))",zIndex:2}}>
+            <div style={{fontSize:16,color:"#94a3b8",fontStyle:"italic"}}>Photo by Paul Montuoro, Melbourne Museum.</div>
           </div>
         </div>
         {/* Rasch quote below */}
@@ -768,96 +714,61 @@ export default function App(){
     ),
 
     // ═══ SLIDE 10 — Three Views of the Same Thing ═══
-    ()=>{
-      const odds=Math.exp(logitDiff);
-      const prob=odds/(1+odds);
-      return(
-        <div style={{padding:"50px 60px"}}>
-          <SlideTitle>Three Views, One Reality</SlideTitle>
-          <div style={{display:"flex",gap:24,justifyContent:"center",margin:"20px auto",maxWidth:1700}}>
-            {/* Odds panel */}
-            <div style={{flex:1,padding:"20px",background:"rgba(245,158,11,0.06)",border:"2px solid rgba(245,158,11,0.3)",borderRadius:16}}>
-              <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#f59e0b",marginBottom:12}}>ODDS</div>
-              <svg viewBox="0 0 300 200" style={{width:"100%"}}>
-                <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/><line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
-                {/* curve */}
-                {Array.from({length:100},(_,i)=>{const x=-5+i*0.1;const y=Math.min(Math.exp(x),150);const sx=40+(x+5)/10*240;const sy=180-y/150*170;return i===0?null:<line key={i} x1={40+((x-0.1)+5)/10*240} y1={180-Math.min(Math.exp(x-0.1),150)/150*170} x2={sx} y2={sy} stroke="#f59e0b" strokeWidth={2}/>;}).filter(Boolean)}
-                {/* marker */}
-                <circle cx={40+(logitDiff+5)/10*240} cy={180-Math.min(odds,150)/150*170} r={6} fill="#f59e0b" stroke="#fff" strokeWidth={2}/>
-                <text x={150} y={198} textAnchor="middle" fill="#94a3b8" fontSize={11}>Exponential: 0 → ∞</text>
-              </svg>
-              <div style={{textAlign:"center",fontSize:36,fontWeight:700,color:"#f59e0b"}}>{odds<100?odds.toFixed(2):odds.toFixed(0)}</div>
-            </div>
-            {/* Log-odds panel */}
-            <div style={{flex:1,padding:"20px",background:"rgba(34,197,94,0.06)",border:"2px solid rgba(34,197,94,0.3)",borderRadius:16}}>
-              <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#22c55e",marginBottom:12}}>LOG-ODDS (Logits)</div>
-              <svg viewBox="0 0 300 200" style={{width:"100%"}}>
-                <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/>
-                <line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
-                {/* straight line */}
-                <line x1={40} y1={180} x2={280} y2={10} stroke="#22c55e" strokeWidth={2.5}/>
-                {/* marker */}
-                <circle cx={40+(logitDiff+5)/10*240} cy={180-(logitDiff+5)/10*170} r={6} fill="#22c55e" stroke="#fff" strokeWidth={2}/>
-                <text x={150} y={198} textAnchor="middle" fill="#94a3b8" fontSize={11}>Linear: -∞ → +∞</text>
-              </svg>
-              <div style={{textAlign:"center",fontSize:36,fontWeight:700,color:"#22c55e"}}>{logitDiff.toFixed(2)}</div>
-            </div>
-            {/* Probability panel */}
-            <div style={{flex:1,padding:"20px",background:"rgba(56,189,248,0.06)",border:"2px solid rgba(56,189,248,0.3)",borderRadius:16}}>
-              <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#38bdf8",marginBottom:12}}>PROBABILITY</div>
-              <svg viewBox="0 0 300 200" style={{width:"100%"}}>
-                <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/><line x1={40} y1={10} x2={280} y2={10} stroke="#475569" strokeWidth={0.5} strokeDasharray="4"/>
-                <line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
-                {/* sigmoid */}
-                {Array.from({length:100},(_,i)=>{const x=-5+i*0.1;const p2=Math.exp(x)/(1+Math.exp(x));const sx=40+(x+5)/10*240;const sy=180-p2*170;const px=-5+(i-1)*0.1;const pp=Math.exp(px)/(1+Math.exp(px));return i===0?null:<line key={i} x1={40+(px+5)/10*240} y1={180-pp*170} x2={sx} y2={sy} stroke="#38bdf8" strokeWidth={2}/>;}).filter(Boolean)}
-                {/* marker */}
-                <circle cx={40+(logitDiff+5)/10*240} cy={180-prob*170} r={6} fill="#38bdf8" stroke="#fff" strokeWidth={2}/>
-                <text x={150} y={198} textAnchor="middle" fill="#94a3b8" fontSize={11}>Sigmoid: 0 → 1</text>
-              </svg>
-              <div style={{textAlign:"center",fontSize:36,fontWeight:700,color:"#38bdf8"}}>{prob.toFixed(3)}</div>
-            </div>
-          </div>
-          {/* Slider */}
-          <div style={{maxWidth:800,margin:"24px auto",textAlign:"center"}}>
-            <div style={{fontSize:22,color:"#94a3b8",marginBottom:8}}>Ability minus Difficulty (β − δ)</div>
-            <input type="range" min={-5} max={5} step={0.1} value={logitDiff} onChange={e=>setLogitDiff(Number(e.target.value))} style={{width:"100%",accentColor:"#f59e0b",height:8}}/>
-            <div style={{display:"flex",justifyContent:"space-between",fontSize:18,color:"#64748b"}}><span>-5</span><span>0</span><span>+5</span></div>
-          </div>
-        </div>
-      );
-    },
-
-    // ═══ SLIDE 11 — Why Logits Are the Scale ═══
     ()=>(
-      <div style={{padding:"60px 100px"}}>
-        <SlideTitle>Why Logits Are the Scale</SlideTitle>
-        <div style={{display:"flex",gap:60,justifyContent:"center",alignItems:"center",margin:"40px auto",maxWidth:1500}}>
-          <div style={{flex:1}}>
-            <div style={{fontSize:30,color:"#f8fafc",lineHeight:1.8}}>
-              <p>A <span style={{color:"#22c55e",fontWeight:700}}>1-logit</span> increase in ability <em>always</em> multiplies the odds by <span style={{color:"#f59e0b",fontWeight:700}}>e ≈ 2.72</span></p>
-              <p style={{marginTop:24}}>Whether at the bottom or the top of the scale — one logit means the same thing</p>
-              <p style={{marginTop:24}}>Just as the beetle's <span style={{color:"#22c55e"}}>relative growth rate</span> is the same at every stage</p>
-            </div>
+      <div style={{padding:"40px 60px"}}>
+        <SlideTitle>Odds, Log-Odds, Probability</SlideTitle>
+        <div style={{display:"flex",gap:28,justifyContent:"center",margin:"20px auto",maxWidth:1700}}>
+          {/* Odds panel */}
+          <div style={{flex:1,padding:"20px",background:"rgba(245,158,11,0.06)",border:"2px solid rgba(245,158,11,0.3)",borderRadius:16}}>
+            <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#f59e0b",marginBottom:8}}>Odds</div>
+            <svg viewBox="0 0 300 200" style={{width:"100%"}}>
+              <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/><line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
+              {Array.from({length:100},(_,i)=>{const x=-5+i*0.1;const y=Math.min(Math.exp(x),150);const sx=40+(x+5)/10*240;const sy=180-y/150*170;return i===0?null:<line key={i} x1={40+((x-0.1)+5)/10*240} y1={180-Math.min(Math.exp(x-0.1),150)/150*170} x2={sx} y2={sy} stroke="#f59e0b" strokeWidth={2.5}/>;}).filter(Boolean)}
+              <text x={150} y={198} textAnchor="middle" fill="#94a3b8" fontSize={11}>Exponential: 0 → ∞</text>
+            </svg>
+            <div style={{fontSize:20,color:"#94a3b8",textAlign:"center",lineHeight:1.5,marginTop:8}}>Growth in reality is exponential. As ability increases, odds grow by orders of magnitude.</div>
+            {/* Branching tree — inverted, roots at top, exponential doubling downward */}
+            <svg viewBox="0 0 200 70" style={{width:"100%",marginTop:8}}>
+              {/* Level 4: 16 tips at top */}
+              {[45,65,75,95,105,125,135,155].map((x,i)=><g key={i}><line x1={x-6} y1={6} x2={x} y2={16} stroke="#f8fafc" strokeWidth={1} opacity={0.6}/><line x1={x+6} y1={6} x2={x} y2={16} stroke="#f8fafc" strokeWidth={1} opacity={0.6}/></g>)}
+              {/* Level 3: 8 */}
+              {[55,85,115,145].map((x,i)=><g key={i}><line x1={x-10} y1={16} x2={x} y2={28} stroke="#f8fafc" strokeWidth={1.5}/><line x1={x+10} y1={16} x2={x} y2={28} stroke="#f8fafc" strokeWidth={1.5}/></g>)}
+              {/* Level 2: 4 */}
+              <line x1={55} y1={28} x2={70} y2={40} stroke="#f8fafc" strokeWidth={1.5}/><line x1={85} y1={28} x2={70} y2={40} stroke="#f8fafc" strokeWidth={1.5}/>
+              <line x1={115} y1={28} x2={130} y2={40} stroke="#f8fafc" strokeWidth={1.5}/><line x1={145} y1={28} x2={130} y2={40} stroke="#f8fafc" strokeWidth={1.5}/>
+              {/* Level 1: 2 */}
+              <line x1={70} y1={40} x2={100} y2={52} stroke="#f8fafc" strokeWidth={1.5}/><line x1={130} y1={40} x2={100} y2={52} stroke="#f8fafc" strokeWidth={1.5}/>
+              {/* Level 0: 1 root */}
+              <line x1={100} y1={52} x2={100} y2={65} stroke="#f8fafc" strokeWidth={1.5}/>
+            </svg>
           </div>
-          <div style={{flex:1}}>
-            <div style={{background:"rgba(30,41,59,0.6)",padding:"36px",borderRadius:20,border:"2px solid #334155"}}>
-              {[{logit:-3,odds:0.05,label:"Low ability"},{logit:-2,odds:0.14,label:""},{logit:-1,odds:0.37,label:""},{logit:0,odds:1.00,label:"Equal match"},{logit:1,odds:2.72,label:""},{logit:2,odds:7.39,label:""},{logit:3,odds:20.09,label:"High ability"}].map((r,i)=>(
-                <div key={i} style={{display:"flex",alignItems:"center",gap:16,marginBottom:i<6?12:0}}>
-                  <div style={{width:80,fontSize:24,fontWeight:700,color:"#22c55e",textAlign:"right"}}>{r.logit}</div>
-                  <div style={{flex:1,height:24,background:"#1e293b",borderRadius:12,overflow:"hidden"}}><div style={{height:"100%",width:`${Math.min(r.odds/20.09*100,100)}%`,background:"linear-gradient(90deg,#22c55e,#f59e0b)",borderRadius:12,transition:"width 0.5s"}}/></div>
-                  <div style={{width:80,fontSize:20,color:"#f59e0b",textAlign:"left"}}>{r.odds.toFixed(2)}</div>
-                  {i<4&&<div style={{position:"absolute",right:60,fontSize:20,color:"#475569"}}>×2.72</div>}
-                </div>
-              ))}
-              <div style={{display:"flex",justifyContent:"space-between",marginTop:12,fontSize:18,color:"#64748b"}}><span>Logit</span><span>Odds</span></div>
-            </div>
+          {/* Log-odds panel */}
+          <div style={{flex:1,padding:"20px",background:"rgba(34,197,94,0.06)",border:"2px solid rgba(34,197,94,0.3)",borderRadius:16}}>
+            <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#22c55e",marginBottom:8}}>Log-Odds (Logits)</div>
+            <svg viewBox="0 0 300 200" style={{width:"100%"}}>
+              <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/>
+              <line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
+              <line x1={40} y1={180} x2={280} y2={10} stroke="#22c55e" strokeWidth={2.5}/>
+              <text x={150} y={198} textAnchor="middle" fill="#94a3b8" fontSize={11}>Linear: -∞ → +∞</text>
+            </svg>
+            <div style={{fontSize:20,color:"#94a3b8",textAlign:"center",lineHeight:1.5,marginTop:8}}>Logits linearise the exponential. A friendly, equal-interval scale where measurement lives.</div>
+          </div>
+          {/* Probability panel */}
+          <div style={{flex:1,padding:"20px",background:"rgba(56,189,248,0.06)",border:"2px solid rgba(56,189,248,0.3)",borderRadius:16}}>
+            <div style={{textAlign:"center",fontSize:26,fontWeight:700,color:"#38bdf8",marginBottom:8}}>Probability</div>
+            <svg viewBox="0 0 300 200" style={{width:"100%"}}>
+              <line x1={40} y1={180} x2={280} y2={180} stroke="#475569" strokeWidth={1}/>
+              <line x1={40} y1={180} x2={40} y2={10} stroke="#475569" strokeWidth={1}/>
+              {Array.from({length:100},(_,i)=>{const x=-5+i*0.1;const p2=Math.exp(x)/(1+Math.exp(x));const sx=40+(x+5)/10*240;const sy=180-p2*170;const px=-5+(i-1)*0.1;const pp=Math.exp(px)/(1+Math.exp(px));return i===0?null:<line key={i} x1={40+(px+5)/10*240} y1={180-pp*170} x2={sx} y2={sy} stroke="#38bdf8" strokeWidth={2.5}/>;}).filter(Boolean)}
+              <text x={150} y={198} textAnchor="middle" fill="#94a3b8" fontSize={11}>Sigmoid: 0 → 1</text>
+            </svg>
+            <div style={{fontSize:20,color:"#94a3b8",textAlign:"center",lineHeight:1.5,marginTop:8}}>Where person meets item. The probability of a correct response, bounded between 0 and 1.</div>
           </div>
         </div>
-        <KeyInsight>The logarithm linearises the exponential — and linearity is where equal-interval measurement lives</KeyInsight>
       </div>
     ),
 
-    // ═══ SLIDE 13 — Rasch Meets the Heavy Hitters (Final) ═══
+    // ═══ SLIDE 13 — Rasch Meets Fisher, Huxley (Final) ═══
     ()=>(
       <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",padding:"30px 80px",gap:24}}>
         <SlideTitle>Rasch Meets Fisher, Huxley</SlideTitle>
@@ -896,43 +807,6 @@ export default function App(){
       <style>{`*, *::before, *::after { cursor: auto !important; } button, input[type=range] { cursor: pointer !important; }`}</style>
       {/* Slide content */}
       <div style={{width:"100%",height:"calc(100% - 70px)",overflow:"hidden",display:"flex",flexDirection:"column",justifyContent:"center"}}>{slides[currentSlide]()}</div>
-      {/* Analogy overlay — rendered outside slide content to avoid flex centering issues */}
-      {showAnalogy&&<div onClick={e=>{e.stopPropagation();setShowAnalogy(false);}} style={{position:"fixed",top:"10%",left:"8%",width:"84%",height:"80%",display:"flex",flexDirection:"column",padding:"10px 16px",background:"rgba(15,23,42,0.99)",borderRadius:12,zIndex:50,cursor:"pointer",boxShadow:"0 0 60px rgba(0,0,0,0.8)"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridTemplateRows:"1fr 1fr",gap:"14px 18px",flex:1}}>
-          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
-            <div style={{borderRadius:8,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"90%",maxHeight:"78%"}}><img src="./sim.png" alt="Flight Simulator 2020" style={{width:"100%",display:"block"}}/></div>
-            <div style={{fontSize:24,color:"#93c5fd",fontWeight:700,marginTop:10}}>THE MODEL = THE SIMULATION</div>
-          </div>
-          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
-            <div style={{display:"flex",gap:16,alignItems:"flex-start",maxWidth:"90%",maxHeight:"72%"}}>
-              <div style={{flex:1,textAlign:"center"}}>
-                <div style={{borderRadius:6,overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.4)"}}><img src="./real.png" alt="Real world — close" style={{width:"100%",display:"block"}}/></div>
-                <div style={{fontSize:17,color:"#22c55e",fontWeight:700,marginTop:6}}>Close — high information</div>
-              </div>
-              <div style={{flex:1,textAlign:"center"}}>
-                <div style={{borderRadius:6,overflow:"hidden",boxShadow:"0 2px 12px rgba(0,0,0,0.4)",filter:"blur(4px)",opacity:0.35}}><img src="./real.png" alt="Real world — far" style={{width:"100%",display:"block"}}/></div>
-                <div style={{fontSize:17,color:"#ef4444",fontWeight:700,marginTop:6}}>Far — low information</div>
-              </div>
-            </div>
-            <div style={{fontSize:22,color:"#93c5fd",fontWeight:700,marginTop:10}}>VARIANCE = HOW WELL CAN WE SEE REALITY?</div>
-          </div>
-          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
-            <div style={{borderRadius:8,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"85%",maxHeight:"80%"}}><img src="./real_sim.png" alt="Real World vs Flight Simulator comparison" style={{width:"100%",height:"100%",objectFit:"contain",display:"block"}}/></div>
-            <div style={{fontSize:22,color:"#93c5fd",fontWeight:700,marginTop:8}}>THE RESIDUAL: WHERE DOES SIM DIFFER FROM REALITY?</div>
-          </div>
-          <div style={{border:"3px solid #3b82f6",borderRadius:12,background:"rgba(15,23,42,0.97)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,overflow:"hidden"}}>
-            <div style={{display:"flex",gap:12,alignItems:"center"}}>
-              {["30%","50%","70%","90%","100%"].map((pct,i)=>(<div key={i} style={{width:70,height:50,borderRadius:8,background:`rgba(59,130,246,${0.08+i*0.18})`,border:`2px solid rgba(59,130,246,${0.2+i*0.18})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#93c5fd",fontWeight:700}}>{pct}</div>))}
-            </div>
-            <div style={{fontSize:28,color:"#93c5fd",fontWeight:700,marginTop:16}}>CONVERGENCE</div>
-            <div style={{fontSize:20,color:"#94a3b8",textAlign:"center",lineHeight:1.6,marginTop:6}}>Each iteration, the simulation gets closer to reality.</div>
-          </div>
-        </div>
-        <div style={{padding:"10px 20px",background:"rgba(245,158,11,0.1)",borderTop:"2px solid #f59e0b",borderRadius:"0 0 8px 8px",textAlign:"center",animation:"pulse 2.5s ease-in-out infinite",marginTop:6}}>
-          <style>{`@keyframes pulse { 0%,100% { opacity:0.6; } 50% { opacity:1; } }`}</style>
-          <div style={{fontSize:17,color:"#f59e0b",fontWeight:700,lineHeight:1.6}}>The model is the simulation, the simulation is the model.</div>
-        </div>
-      </div>}
       {/* Bottom bar */}
       <div style={{position:"absolute",bottom:0,left:0,right:0,height:70,background:"rgba(15,23,42,0.95)",borderTop:"1px solid #1e293b",display:"flex",alignItems:"center",padding:"0 30px"}}>
         {/* Progress track */}

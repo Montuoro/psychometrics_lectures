@@ -1,4 +1,4 @@
-export const SLIDE_COUNT = 21;
+export const SLIDE_COUNT = 20;
 
 export const SLIDE_TITLES = [
   "Title",
@@ -18,8 +18,7 @@ export const SLIDE_TITLES = [
   "The Rigidity Is the Point",
   "Part 3: The Mathematics of Nature",
   "The Beetle",
-  "Three Views of the Same Thing",
-  "Why Logits Are the Scale",
+  "Odds, Log-Odds, Probability",
   "Rasch Meets Fisher, Huxley",
   "Thank You",
 ];
@@ -49,44 +48,35 @@ Don't explain the beetle yet. Let it sit there, tiny, at the bottom of the scree
   `Just pause here for a beat. Let the title sit. Then advance.`,
 
   // Slide — The Whole and Its Parts
-  `Let the image do the initial work. Pause and let them look at it.
+  `Let the image do the work first. Pause.
 
-"Look at this window. Hundreds of pieces. Different shapes, different colours, different sizes. No single piece tells you what the window is about. But together — when every piece fits with its neighbours — they form something whole. Something greater than any individual fragment."
+"Remember from Session 1 — measuring a latent trait isn't like reading a ruler. It's complex. Many items, each tapping a different part of the same construct."
 
-"That is what items do in an assessment."
+"Look at this window. Hundreds of pieces. Different shapes, different colours. No single piece tells you what the window is about. But together — when every piece fits — they form something whole. Something greater than any individual fragment."
 
-"Each item taps the same latent trait. Each item is a different shape — different content, different format, different level of demand. But they must FIT TOGETHER. When they do, a unidimensional measurement emerges from their combination."
+"That is what items do in an assessment. We assemble many pieces, and from their combined responses, a unidimensional measurement emerges. More complex than physical measurement, but the endpoint is the same: a single scale."
 
-"Now, this is more complex than measuring length with a ruler. When you measure length, you lay the ruler alongside the object and read the mark. It's direct. It's simple. But when we measure something like reading ability, or mathematical reasoning, or psychological wellbeing — we can't do that. There's no ruler to lay alongside someone's brain."
+"The Rasch model builds the window. But the pieces must fit. If a piece doesn't belong, the image begins to break down as a cohesive whole."
+`,
 
-"Instead, we assemble many items — many pieces of glass — and from the pattern of responses across all of them, a measurement emerges. It's more complex, but the endpoint is the same: a unidimensional scale. A single continuum on which persons and items are located."
+  // Slide — People Are Potatoes
+  `"Rasch saw something that many psychometricians still struggle with. Whether you're weighing potatoes on a scale or measuring numeracy in children, you are fundamentally tapping into a unidimensional phenomenon. The destination is the same — a unidimensional scale."
 
-"The Rasch model is the framework that takes those fragments and builds the window. But the pieces must fit. If a piece doesn't belong — if an item isn't measuring the same construct — the image begins to break down as a cohesive whole. We'll see how we detect that when we talk about fit."
+"But the way we get there is very different. With a ruler or a set of scales, it's direct. With human measurement, the path is tough and complex. It requires a conceptual leap: first, that we ARE moving toward a unidimensional scale — just like physical measurement. And second, that getting there requires a lot of work — complex, hard, conceptually difficult work. Building items, checking fit, testing invariance."
 
-Point to the key insight box: "The whole is greater than — and is formed by — the sum of its parts. But the parts must fit together. That's the fundamental requirement."`,
+"Rasch understood this. And in 1968 he tried to explain it to a room full of psychologists. He used a simple analogy: weighing potatoes at the market. The reading on the scale must not depend on what else is on the counter, who is standing next to you, or what you bought before. The weight is the weight. Independent of irrelevant context."
 
-  // Slide — We Are Not Potatoes
-  `This is the potato story slide. The image does most of the work — let it land visually before you speak.
-
-Pause and let them read the image. Then tell the story:
-
-"In 1968, Georg Rasch was invited to give a talk to a room full of psychologists. He wanted to explain a principle he considered fundamental to measurement — that measurement must be, in his words, 'independent of irrelevant factors.'"
-
-"He chose a very simple analogy. He said: imagine you go to the market to buy potatoes. The shopkeeper places them on the scale. The reading on that scale must not depend on what else is sitting on the counter, what you bought five minutes ago, or who is standing next to you in the queue. The weight is the weight. It is independent of irrelevant context."
-
-"His point was profound: a person's ability estimate should work the same way. It shouldn't depend on which particular items happened to be on the test, or which other people happened to take it at the same time. That is what he called specific objectivity. That is measurement."
+"His point: a person's ability estimate should work the same way. It should not depend on which items were on the test or which other people took it. This is specific objectivity. This is invariance. This is human measurement — and this is what we already discussed in Session 1."
 
 Pause for effect.
 
-"The psychologists listened politely. And when he finished, there was silence. Then one person in the audience responded — and this was the ONLY response. They said:"
+"During Rasch's lecture in 1968, one psychologist interrupted with a simple statement:"
 
 Deliver with comic timing: "'...but we are not potatoes.'"
 
-Let the audience react. Then deliver the punchline:
+"They thought human psychology was too complex, too special, for the same principles. But Rasch was right. The principle of invariant comparison is what makes measurement MEASUREMENT — whether you're weighing potatoes or measuring reading ability. The path is harder with humans. But the destination is the same."
 
-"They meant that human psychology is too complex, too nuanced, too SPECIAL to be governed by the same measurement principles as weighing vegetables at market."
-
-Point to the punchline on screen: "But when it comes to the PRINCIPLES of measurement — invariance, independence, objectivity — we kind of ARE like potatoes. The weight of a potato must be independent of what else is on the scale. The ability of a person must be independent of what else is on the test. The principle is identical."`,
+"Now — a small note about where I'm getting all of this. Everything I quote from Rasch in this presentation comes from a single source: an extremely rare recording made in 1978 at the University of Western Australia, when Rasch worked directly with David Andrich — who trained me — for six months. Rasch died only a couple of years later. This recording is real gold, and as far as I know it's one of the only extended interviews he ever gave. So whenever you hear me say 'Rasch said...' — that's where it comes from."`,
 
   // Slide — What Is a Model?
   `"So if measurement must be independent of irrelevant factors — if we really are like potatoes — how does the Rasch model enforce that?"
@@ -95,45 +85,41 @@ Now we get into the mechanics. This slide has two parts: the circularity diagram
 
 PART 1 — THE CIRCULARITY
 
-"A lot of people ask me: what IS a model? And in the Rasch context, it's a genuinely interesting question — because there's a circularity to it."
+"A lot of people ask me: what is a model? In the Rasch context, it's a genuinely interesting question — because two things are going on. First, Rasch takes the idea of a model as a benchmark really seriously. The model isn't just a statistical convenience — it's the standard against which everything is judged. And second, there's an ingenious circularity to how it works."
 
 Point to the four-step diagram:
 "Step 1: We collect response data — persons answering items, ones and zeros."
-"Step 2: The Rasch model uses ALL of that data to build a measurement scale — it estimates where every person and every item sits on the continuum."
-"Step 3: But then — and this is the crucial part — the model becomes the CRITERION. Each individual item's data is checked against the model that was built from all items together."
+"Step 2: The Rasch model uses all of that data to build a measurement scale — it estimates where every person and every item sits on the continuum."
+"Step 3: But then — and this is the crucial part — the model becomes the criterion. Each individual item's data is checked against the model that itself was built using all person-item interactions."
 "Step 4: If an item doesn't conform — if its observed responses don't match what the model predicts — we have a problem. That item isn't measuring the same construct as the others."
-"So the model is built FROM the data, but the data must FIT the model. It's circular — and intentionally so."
+"So the model is built from the data, but the data must fit the model. It's circular — and intentionally so."
 
-PART 2 — 2PL/3PL CONTRAST
-
-Now point to the two comparison boxes.
-
-"And this is exactly where the Rasch model parts company with other models. The two-parameter model adds a discrimination parameter. The three-parameter model adds a guessing parameter. They bend the model to accommodate the data. But the moment you do that, you destroy invariance — the comparison between two persons now depends on WHICH items they faced."
+"And this is exactly where the Rasch model parts company with other models. The two-parameter model adds a discrimination parameter. The three-parameter model adds a guessing parameter. They bend the model to accommodate the data. But the moment you do that, you destroy invariance — the comparison between two persons now depends on which items they faced."
 
 "The Rasch model refuses to bend. Data must fit the model. And that rigidity is the point — it's what preserves the measurement properties we need."
 
-"We'll come back to fit in a moment. First, let's see HOW the model builds the scale."`,
+"We'll come back to fit in a moment. First, let's see how the model builds the scale."`,
 
   // Slide — MLE: Autofocus
   `This is the conceptual slide. The autofocus analogy makes MLE visceral and immediate. Keep it in lay terms.
 
-"Now that we understand what we're building — a unidimensional scale with persons and items — the question is: HOW does the model find it? The answer is Maximum Likelihood Estimation. And I want to explain it with something everyone has experienced."
+"Now that we understand what we're building — a unidimensional scale with persons and items — the question is: how does the model find it? The answer is maximum likelihood estimation. And I want to explain it with something everyone has experienced."
 
 "Think about what happens when you press the shutter button halfway on a camera — or when your phone focuses on a face. We take it for granted now, but autofocus is actually a beautiful example of iterative estimation."
 
-"A bit of history: the earliest autofocus systems in the late 1970s and early 1980s — cameras like the Konica C35 AF in 1977 and the original Minolta Maxxum in 1985 — used what's called contrast detection. The principle is simple: the camera moves the lens motor a small amount, then reads the sensor to measure the contrast in the image. An in-focus image has sharp edges — high contrast between light and dark pixels. An out-of-focus image has soft edges — low contrast. So the camera moves the lens, measures contrast, asks 'did it go up or down?', and moves again in whichever direction improved things."
+"A bit of history: the earliest autofocus systems in the late 1970s and early 1980s — cameras like the Konica C35 AF in 1977 and the original Minolta Maxxum in 1985 — used what's called contrast detection. The principle is simple: the camera moves the lens motor a small amount, then reads the sensor to measure the contrast in the image. An in-focus image has sharp edges — high contrast in the focus area. An out-of-focus image has soft edges — low contrast. So the camera moves the lens, measures contrast, asks 'did it go up or down?', and moves again in whichever direction improved things."
 
 "This is literally hill-climbing. The camera is searching for the peak of a contrast curve. It doesn't know where the peak is in advance — it discovers it by iterating."
 
 Click Unfocused. Let the blurry image sit.
 
-"You're looking through the viewfinder. The scene is right there in front of you — our potato friend, the items around it. But everything is blurry. The image EXISTS. It's real. You just can't see it clearly yet. That's where we start in MLE: the measurement is in the data, but we haven't found it yet."
+"You're looking through the viewfinder. The scene is right there in front of you — our potato friend, the items around it. But everything is blurry. The image exists. It's real. You just can't see it clearly yet. That's where we start in MLE: the measurement is in the data, but we haven't found it yet."
 
 Click Focus 1. "First adjustment. The lens motor nudges forward. Contrast goes up. The camera knows it's moving in the right direction. Already a bit sharper."
 
-Click Focus 2, 3. "Each time, the adjustment gets smaller. The big corrections happen early — when you're way out of focus, ANY movement toward the right position makes a dramatic improvement in contrast. But as you approach the peak, the contrast curve flattens out. The gains get subtler. The motor makes finer and finer adjustments."
+Click Focus 2, 3. "Each time, the adjustment gets smaller. The big corrections happen early — when you're way out of focus, any movement toward the right position makes a dramatic improvement in contrast. But as you approach the peak, the contrast curve flattens out. The gains get subtler. The motor makes finer and finer adjustments."
 
-"This is what early contrast-detection AF cameras did — and if you remember the 1990s, you remember the sound of the lens hunting back and forth, especially in low light. That hunting IS the iteration. Modern phase-detection AF is much faster because it can calculate the direction and distance to the focus point directly, rather than hunting. But the underlying principle — search for the optimum — is the same."
+"This is what early contrast-detection AF cameras did — and if you remember the 1990s, you remember the sound of the lens hunting back and forth, especially in low light. That hunting is the iteration."
 
 Click Focus 4, 5. "Now the adjustments are tiny. We're very close. Fine-tuning."
 
@@ -141,11 +127,18 @@ Click Locked. The bracket turns green.
 
 "Focus locked. The camera has found the sweet spot — the lens position where contrast is maximised. The image is as sharp as it can possibly be."
 
-"Maximum likelihood estimation works in exactly the same way. The 'image' is the measurement — the true position of every person and every item on the scale. It's already in the data, just like the scene is already in front of the lens. The algorithm starts with crude initial estimates, computes what the data SHOULD look like given those estimates, compares predicted to observed, and adjusts in whatever direction improves the fit. Over and over, with each adjustment smaller than the last, until it converges."
+"Maximum likelihood estimation works in exactly the same way. The 'image' is the measurement — the true position of every person and every item on the scale. It's already in the data, just like the scene is already in front of the lens. The algorithm starts with crude initial estimates, computes what the data should look like given those estimates, compares predicted to observed, and adjusts in whatever direction improves the fit. Over and over, with each adjustment smaller than the last, until it converges."
 
-"That convergence point is the maximum of the likelihood function. It's the peak of the hill. The point of sharpest clarity. The point where the predicted data matches the observed data as closely as mathematically possible."
+"That convergence point is the maximum of the likelihood function. It's the peak of the hill. The point of sharpest clarity."
 
-"The specific technique the Rasch model uses for these adjustments is called Newton-Raphson. It's more sophisticated than the camera's simple contrast-detection hunt — rather than just checking 'better or worse,' it uses the slope and curvature of the likelihood function to calculate EXACTLY how far to adjust and in which direction. It's like upgrading from the old hunting contrast-detection motor to a modern system that knows precisely where to go. But the principle is identical: iterate toward the optimum."
+"And I want to be very specific here, because this is the key element in modelling data in the Rasch model. I'm going to say it twice."
+
+"It's the point where the model — specifically the item-difficulty and person-ability estimates — lead to probabilities of correct responses that are as close to reality as mathematically possible."
+
+Pause. Then repeat it slowly:
+
+"The item-difficulty and person-ability estimates lead to probabilities of correct responses that are as close to reality as mathematically possible. That is what maximum likelihood estimation does. That is what the model is."
+
 
 "Now let me show you what this actually looks like with real numbers."`,
 
@@ -156,33 +149,27 @@ Click Raw Data.
 
 "Here is our response matrix — 9 persons labelled A through I, 10 items. Ones and zeros. On the right you can see the row totals — Person A got 8 correct, Person I got 2. The column totals show how many persons got each item right. Items 1 to 4 were easy. Items 9 and 10 were hard — only 1 correct each."
 
-"The initial ability and difficulty estimates on the right come from the simplest possible transformation: the log of the odds. Take the raw proportion of items a person got correct, divide by the proportion incorrect — that gives you the odds. Then take the natural log. Person A got 8 out of 9, so the proportion is about 0.89, the odds are about 8:1, and the log-odds is about 2.1. Person G got half right — proportion 0.5, odds 1:1, log-odds zero. Person I got 2 out of 10 — proportion 0.2, odds 0.25:1, log-odds negative. Same logic for items but in reverse."
+"The initial ability and difficulty estimates on the right come from the simplest possible transformation: the log of the odds. Take the raw proportion of items a person got correct, divide by the proportion incorrect — that gives you the odds. Then take the natural log. Person A got 8 out of 10, so the proportion is 0.80, the odds are 4:1, and the log-odds is about 1.39. Same logic for items, but reversed."
 
-"These initial logits are VERY rough. They're just the raw proportions converted to a log scale. They don't account for which specific items a person got right or which specific persons got an item right. They're the blurry starting image. The whole point of the iterative process is to refine these crude starting estimates into precise measurements."
+"These initial logits are very rough. They're just the raw proportions converted to a log scale. They don't account for which specific items a person got right or which specific persons got an item right. They're the blurry starting image. The whole point of the iterative process is to refine these crude starting estimates into precise measurements."
 
-"Now watch what happens."
+"Before we start iterating, let me explain the four matrices you're about to see."
 
-Click Iteration 1.
+"Top left: expected values. These are the probabilities of a correct response for every person-item interaction, based on the current person ability and item difficulty estimates. They are literally the model's predictions — what it thinks should happen given where it currently believes each person and item sits on the scale."
 
-"Each cell now shows two numbers. The top number is the EXPECTED VALUE — the probability this person gets this item right, computed from the Rasch formula using current estimates. The bottom number in colour is the RESIDUAL — observed minus expected."
+"Top right: variance — also known as Fisher information. When the item difficulty is well matched to the person's ability — when P is around 0.5 — the information is high. The response could go either way, so it tells us a lot about where the person actually sits. We can make a confident adjustment. When the item is way too easy or too hard — P near 0 or 1 — the outcome is almost certain, so it tells us very little. We adjust cautiously."
 
-"Red cells have large residuals — the predictions are still poor. Green cells are near zero — prediction matches reality. On the right, the estimates have shifted — the yellow arrows show movement. The total residual at the bottom has dropped."
+"Bottom left: residuals. These are simply the observed data — the raw zeros and ones — minus the expected values. They tell us where reality differs from the model's predictions, and in which direction."
 
-Click Iteration 2.
+"Now here's how the iterations work. The algorithm uses the residuals and the variance together. The residuals tell us the direction each estimate needs to move. The variance tells us how far we dare to move it — how much precision we have. Each iteration adjusts every person and item estimate, aiming to reduce the total sum of residuals for each person and each item toward a target of 0.001."
 
-"Second pass. Expected values recalculated with updated estimates. Residuals shrink further. The faded dots show where estimates WERE — you can see the refinement happening."
+"Watch what happens."
 
-Click Iteration 3, then Iteration 5.
+Click through the iterations slowly. As you do:
 
-"Most residuals are green now. The total residual is much smaller. Estimates are barely moving."
+"With each iteration, the expected values are recalculated based on the updated estimates. The residuals shrink — as a function of the distance from the actual results and the Fisher information. The refinements continue, iteration after iteration, until the total sum of residuals for persons and items reaches the convergence point of 0.001."
 
-Click Iteration 10, then 15.
-
-"The adjustments are now tiny. The estimates have almost settled."
-
-Click Iteration 20.
-
-"Converged. The maximum change in any estimate is below 0.001. Every person ability, every item difficulty, is at the point where predictions match observations as closely as possible. These are your measurements — jointly estimated on the same logit scale."`,
+"At that point — converged. Every person ability, every item difficulty, is at the point where predictions match observations as closely as possible. These are your measurements — jointly estimated on the same logit scale."`,
 
   // Section Break — Part 2
   `Pause. Let them settle. "Now we've seen how the model is built. The next question is: how do we know it's working? We'll look at discrimination, reliability, and validity."`,
@@ -235,44 +222,22 @@ Now point to the C. diff images and rulers at the bottom.
 "That's exactly what discrimination does. High discrimination gives you a fine-grained unit — persons separate clearly. Low discrimination gives you a coarse unit — persons get mushed together. And that feeds directly into reliability, which we'll look at next."`,
 
   // Reliability
-  `This slide is critical. Most people you talk to have no idea what reliability really is. You need to dismantle the misconception and replace it with the correct understanding.
+  `"We've just seen that high discrimination gives us a precise unit of measurement. Now — what does that mean for reliability?"
 
-Start with the misconception:
+"Most people will tell you reliability means repeatability — if we gave the test again, would we get the same result? That's putting the cart before the horse."
 
-"If you ask most people what reliability means, they'll say something like: 'It's about repeatability. If I gave the test again, would I get the same result?' That sounds reasonable. But it's putting the cart before the horse."
+"Here's what reliability actually is. Look at the equation — the person separation index. It's the variance of the ability estimates minus the error, divided by the variance. Signal minus noise, divided by signal. How much of the spread in our estimates is real, and how much is measurement error?"
 
-Point to the red box. "This view is simplistic and misleading. Let me explain why."
+"When items have high discrimination and are well targeted to the people taking the test, the probability of a correct response moves swiftly with small changes in ability. Item difficulties also match the range of person abilities. We end up with good separation between persons, low error, and overall a nice spread of the estimates. This is high reliability."
 
-Now transition to the green box:
+"And yes, as a consequence, those results will be repeatable. But the repeatability is the consequence — not the thing itself. The thing itself is person separation."
 
-"Reliability is really about one thing: how precisely can we SEPARATE persons and place them according to their abilities, given the error — the noise — in our measurements?"
-
-"Think about it this way. The items in a test each carry some measurement error. That error reflects how well the items are TARGETED to the people taking the test. If items are well targeted — meaning the difficulty of the items matches the ability range of the people — then each response carries maximum information. The error is small. We can tell people apart with precision."
-
-"But what happens when items are poorly targeted?"
-
-Give the first example: "Suppose you have a test where there's a 99% chance that everyone will get most items right. What does that tell you? Almost nothing. You know they'll all get it right, but you CANNOT infer their true underlying ability. Their true ability could be just barely above the items, or it could be miles above. You can't tell. The error is enormous."
-
-Give the second example: "Now flip it around. Give very young children a medical school entry exam. They have virtually no chance of answering any item correctly. That tells you nothing about the children's ability. It could be anywhere below the items. The error, derived from Fisher information, is so high that any separation of persons is untrustworthy."
-
-Now point to the equation:
-
-"The Person Separation Index makes this transparent. It's the variance of the ability estimates — that's the total spread of persons — minus the mean squared standard errors — that's the average noise — divided by the total spread. It tells you: of all the variation we observe in ability estimates, how much is SIGNAL and how much is NOISE?"
-
-"When items are well targeted, error is small, and the ratio is high — we can separate people reliably. When items are poorly targeted, error dominates, and the ratio collapses — we CANNOT separate people, regardless of how 'repeatable' the scores might be."
-
-Now the key reframe:
-
-"So here's the crucial point. The traditional view says reliability means 'we'd get the same result if we did it again.' The Rasch perspective says reliability means 'we can tell people apart with precision.' Repeatability is a CONSEQUENCE of good separation — not the definition of it. If you have high person separation, yes, the results will be repeatable. But the repeatability is the symptom. The thing itself is: can we differentiate between persons in a clear, trustworthy manner?"
-
-"A test where everyone scores 99% is perfectly 'repeatable.' Give it again, everyone scores 99% again. But it tells you almost nothing about where people actually stand. That is LOW reliability despite HIGH repeatability. That's why the traditional definition puts the cart before the horse."`,
+"That's why the traditional definition puts the cart before the horse. Repeatability follows from good separation, good targeting, and high discrimination. It doesn't define reliability — it's the outcome of it."`,
 
   // Slide — Fit and Construct Validity
-  `This slide bridges reliability into validity. Start by reading the subtitle line on screen.
+  `"The Rasch model is what I call a validity machine. What we're doing here is moving from reliability — which is a form of discrimination and targeting — to determining whether we measure in each item what we think we're measuring. We're going back to Kelley in the 1920s here."
 
-"The Rasch model is a validity machine. It creates a simulation so we can examine whether items operate in unison, reflecting the overall model. That examination is fit — and fit is the quantitative heart of construct validity."
-
-"Since Messick in the 1980s, we've understood that construct validity is the overarching concept — content validity, predictive validity, concurrent validity are all just pieces of evidence for it. In the Rasch model, fit IS that evidence. If items fit the model, they're measuring the same construct. If they don't, something is wrong with the item, or with our understanding of the construct."
+"The Rasch model establishes a model — a simulation — so we can examine whether items operate in unison, reflecting the overall model. That examination is fit, and fit is the quantitative heart of construct validity."
 
 "So — how do we check fit?"
 
@@ -319,7 +284,7 @@ Point to each as you name it:
 
 Pause for emphasis.
 
-"Remember what we established in Lecture 1: measurement requires invariance. The comparison between two persons must be independent of which items are used. The comparison between two items must be independent of which persons are tested."
+"Remember what we established in Session 1: measurement requires invariance. The comparison between two persons must be independent of which items are used. The comparison between two items must be independent of which persons are tested."
 
 "The moment you add a discrimination parameter, you destroy that invariance. The comparison between two persons now depends on WHICH items they faced — because different items discriminate differently."
 
@@ -341,47 +306,36 @@ Let the quote sit on screen.`,
 
 Pause. Let the Melbourne Museum image fill the screen.
 
-"This photograph stopped me in my tracks at the Melbourne Museum. Dung beetles and stag beetles, arranged in spirals by size — each one larger than the last. It's the visual signature of exponential growth."
+"This display stopped me in my tracks at the Melbourne Museum. Dung beetles and stag beetles, arranged in spirals by size — each one larger than the last. It's the visual signature of exponential growth."
 
 "Look at the beetles at the small end. Tiny. Now look at the ones at the top. Enormous. The absolute size increments get larger and larger and larger. That's exponential growth — each step is bigger than the last."
 
-"But here's the key: the RELATIVE growth — each increment as a proportion of the current size — is CONSTANT. The beetle doubles, then doubles again, then doubles again. The ratio is the same every time."
+"But here's the key: the relative growth — each increment as a proportion of the current size — is constant. The beetle doubles, then doubles again, then doubles again. The ratio is the same every time."
 
 "Absolute growth: exponential. Relative growth: linear."
 
-Pause. "This is exactly what the Rasch model is."`,
+Pause. "This is exactly what the Rasch model is."
 
-  // Slide 10 — Three Views of the Same Thing
-  `This is the mathematical heart of the lecture. Use the interactive triple-panel display.
+Now refer to the Rasch quote below the image.
 
-"There are three ways to express the relationship between a person's ability and an item's difficulty. They are three views of the SAME thing."
+"During his year with Fisher in London, Rasch analysed crab shell data — growth segments plotted on a log scale that followed straight lines from a centre of growth. This was close to individual-level growth data, not just population statistics. When he showed it to Huxley, Huxley was struck — his own work on allometric growth had been about populations. But Rasch's data was approaching how the individual organism grows."
 
-Point to the left panel. "ODDS. The odds of a correct response are exponential. As the difference between ability and difficulty increases, the odds grow without bound. Odds of 1:1, then 3:1, then 7:1, then 20:1, then 55:1... exploding upward. Like the beetle — absolute growth is exponential."
+"That's what Rasch means in this quote. He took from that encounter a conviction that measurement must deal with individuals — not population distributions. And that conviction carried all the way through to the model we use today."`,
 
-Point to the centre panel. "LOG-ODDS — logits. Take the natural logarithm of the odds, and the exponential curve becomes a straight line. EQUAL intervals. A one-logit increase ALWAYS means the same thing — the odds have been multiplied by e, about 2.72. This is where measurement lives. This is the Rasch scale."
+  // Slide 10 — Odds, Log-Odds, Probability
+  `"Let me show you three ways of looking at the same thing — and why it matters."
 
-Point to the right panel. "PROBABILITY. Odds divided by one-plus-odds. The exponential growth, meeting a ceiling. Probability can never exceed 1 — you can never be MORE than certain. The result is the sigmoid — the S-curve. This is what we actually observe."
+Point to the left panel. "Odds. Just like in biology — as we'll see in a moment with E. coli growth — when ability increases, it increases exponentially. Think about synapses. As connections are laid down in the brain, each new connection builds on the ones before. The growth is by orders of magnitude. More able means exponentially more able. More difficult means exponentially more difficult. That's what the odds scale shows."
 
-Now use the slider. "Watch what happens as I increase the ability-difficulty difference..."
+Point to the centre panel. "Log-odds — logits. This is simply a friendly way of looking at that exponential growth. Take the natural log and the exponential becomes a straight line. Equal intervals. Interpretable. This is where measurement lives — on an interval-level scale. The logit scale is how we make exponential growth usable."
 
-Drag the slider slowly. "Odds explode upward. Logits move steadily — equal steps. Probability approaches 1 but never reaches it."
+Point to the right panel. "Probability. This is where person meets item. The probability of a correct response — bounded between 0 and 1. It's a function of both person ability and item difficulty."
 
-"Three views. One reality."`,
+"Growth in reality is exponential. Logits are the friendly way of placing it on a scale so we can interpret it. And probability is what we actually observe when a person interacts with an item."
 
-  // Slide 11 — Why Logits Are the Scale
-  `"Why do we measure in logits rather than odds or probabilities?"
+"So odds and log-odds are what the thing IS — for persons, for items. Whether we look at it in the realistic view of exponential growth, which is odds, or in the measurement view, which is log-odds — linear, interpretable, equal-interval. But ultimately, probability is what we are viewing in reality. In the natural world, the probability would be the probability of successful growth — given, for example, that the animal might be eaten or predated. In ability testing, it's whether the kid is going to get the answer right or wrong."`,
 
-"Because logits are LINEAR. And linearity means equal intervals. A one-logit difference between two persons means the same thing regardless of where they sit on the scale."
-
-"Think of the beetle again. If you tried to measure growth using the beetle's absolute size — the exponential — a unit at the small end would mean something completely different from a unit at the large end. That's not measurement."
-
-"But if you measure using the RELATIVE growth rate — the logarithm — then every unit means the same proportional change. That IS measurement."
-
-"In the Rasch model, a one-logit increase in ability always multiplies the odds of success by the same factor — e, approximately 2.72. Whether you're at the bottom of the scale or the top, one logit means the same thing."
-
-"This is why the log-odds scale is the measurement scale. It linearises the exponential — and linearity is where equal-interval measurement lives."`,
-
-  // Slide — Rasch Meets the Heavy Hitters
+  // Slide — Rasch Meets Fisher, Huxley
   `This is the closing slide before questions. Let the E. coli GIF run — the audience is watching exponential growth happen in real time while you speak. Keep it slow and let it land.
 
 Point to the GIF. "What you're watching is E. coli — a colony of bacteria growing on a microscope slide. This is exponential growth. Real, biological, observable."
